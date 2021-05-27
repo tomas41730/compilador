@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class Main extends Application {
 
     @Override
@@ -20,6 +22,8 @@ public class Main extends Application {
 
     public static void main(String[] args)
     {
+        //List<String> lista = ManejoArchivos.leerArchivo("D:\\Tomas\\Documentos\\Compilación\\Proyecto\\ficheros\\ejemplo.txt");
+        //lista.forEach(System.out::println);
         launch(args);
     }
 }
