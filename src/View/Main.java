@@ -23,6 +23,9 @@ public class Main extends Application {
 
     public static void main(String[] args)
     {
+        //List<String> lines = ManejoArchivos.leerArchivo("code.txt");
+        //System.out.println(lines);
+        //DiagramaTrancisiones dt = new DiagramaTrancisiones();
         launch(args);
     }
 }
