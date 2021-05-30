@@ -4,7 +4,7 @@ import java.util.*;
 
 public class AnalizadorLexico
 {
-    private final Dictionary tablaPalabrasReservadas;
+    private Dictionary tablaPalabrasReservadas;
     private DiagramaTrancisiones dt;
     private final List<Lexema> listaLexemas;
 
