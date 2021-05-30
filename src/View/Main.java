@@ -1,6 +1,7 @@
 package View;
 
 import Controller.ManejoArchivos;
+import Model.DiagramaTrancisiones;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,8 +23,6 @@ public class Main extends Application {
 
     public static void main(String[] args)
     {
-        //List<String> lista = ManejoArchivos.leerArchivo("D:\\Tomas\\Documentos\\Compilación\\Proyecto\\ficheros\\ejemplo.txt");
-        //lista.forEach(System.out::println);
         launch(args);
     }
 }
