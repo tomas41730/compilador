@@ -30,4 +30,12 @@ public class AnalizadorLexico
             System.out.println(lexema.toString());
         }
     }
+    
+    public void imprimirDetalles(){ //Este metodo intenta replicar el modelo de tabla
+        //como el ejemplo en trello del COM-06
+        System.out.println("Lexema      Token       Fila        Columna        Error");
+        for (Lexema lexema : listaLexemas) {
+            System.out.println(lexema.detalles();
+        }
+    }
 }
