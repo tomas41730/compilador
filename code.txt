@@ -1,0 +1,13 @@
+{
+	int x = 0
+	int y = 1
+
+	int add(a,b) {
+		return a+b
+	}
+
+	void main(){
+		z=add(x,y)
+	}
+
+}
