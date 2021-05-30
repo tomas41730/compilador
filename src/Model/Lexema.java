@@ -12,7 +12,6 @@ public class Lexema
     {
 
     }
-
     public Lexema(String valor, String token, int fila, int columna, boolean error)
     {
         this.valor = valor;
@@ -71,5 +70,15 @@ public class Lexema
                 ", columna=" + columna +
                 ", error=" + error +
                 '}';
+    }
+
+    public String detalles(){ //Servira de variable auxiliar cuando lea desde
+        //el AnalizadorLexico
+        return this.valor + "       " +
+                this.token + "       "+
+                this.fila + "         "+
+                this.columna + "        "+
+                this.error;
+                
     }
 }
