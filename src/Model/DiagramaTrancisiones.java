@@ -8,14 +8,143 @@ public class DiagramaTrancisiones
 {
     private Dictionary expresionesRegulares;
     private Dictionary tablaPalabrasReservadas;
-    private Dictionary tablaDelimitadores;
+    private Dictionary estados;
+    private EstadoTransicion estadoActual;
 
     public DiagramaTrancisiones()
     {
         this.inicializarPR();
-        this.inicializarDelimitadores();
         this.inicializarER();
+        this.inicializarDiagrama();
+
+        //pruebas de match:
+        // if(x1==2.3){} pasa
+        // if(x1.s==2.3){} pasa con x1.s como error
+        //ssas'=3 pasa con ssas' con error
+        // 21as pasa con 21as como error
+
+        //this.analizarLexema("if(x==1){", 2, 0);
     }
+
+    private void inicializarDiagrama()
+    {
+
+        //Definimos los estados del diagrama de transiciones
+
+        this.estados = new Hashtable();
+        this.estados.put(0, (new EstadoTransicion(0, "", false)));
+        //id states
+        this.estados.put(1, (new EstadoTransicion(1, "identificador", true)));
+        this.estados.put(2, (new EstadoTransicion(2, "identificador", true)));
+        this.estados.put(3, (new EstadoTransicion(3, "identificador", true)));
+        this.estados.put(4, (new EstadoTransicion(4, "identificador", true)));
+        this.estados.put(5, (new EstadoTransicion(5, "identificador", true)));
+        this.estados.put(6, (new EstadoTransicion(6, "identificador", true)));
+        this.estados.put(7, (new EstadoTransicion(7, "identificador", true)));
+        this.estados.put(8, (new EstadoTransicion(8, "identificador", true)));
+        this.estados.put(9, (new EstadoTransicion(9, "identificador", true)));
+        this.estados.put(10, (new EstadoTransicion(10, "identificador", true)));
+
+        // Op. Arit
+        this.estados.put(11, (new EstadoTransicion(11, "Op. Aritmetico", true)));
+
+        // Asignacion
+        this.estados.put(12, (new EstadoTransicion(12, "Asignacion", true)));
+
+        // Op. Logico
+        this.estados.put(13, (new EstadoTransicion(13, "Op. Logico", true)));
+        this.estados.put(14, (new EstadoTransicion(14, "Op. Logico", true)));
+        this.estados.put(15, (new EstadoTransicion(15, "", false)));
+        this.estados.put(16, (new EstadoTransicion(16, "", false)));
+        this.estados.put(17, (new EstadoTransicion(17, "", false)));
+
+        //delimitadores
+        this.estados.put(18, (new EstadoTransicion(18, "delimitador", true)));
+
+        //numeros
+        this.estados.put(19, (new EstadoTransicion(19, "Numero entero", true)));
+        this.estados.put(20, (new EstadoTransicion(20, "", false)));
+        this.estados.put(21, (new EstadoTransicion(21, "Numero real", true)));
+
+        //string
+        this.estados.put(22, (new EstadoTransicion(22, "", false)));
+        this.estados.put(23, (new EstadoTransicion(23, "string", true)));
+
+        //error
+        this.estados.put(50, (new EstadoTransicion(50, "error", false)));
+
+
+        //Agregamos las transiciones
+
+        //q0
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(1)),(String)this.expresionesRegulares.get("letra")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(11)),(String)this.expresionesRegulares.get("Op. Aritmetico")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(12)),(String)this.expresionesRegulares.get("igual")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(13)),(String)this.expresionesRegulares.get("mayorOMenor")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(15)),(String)this.expresionesRegulares.get("dif")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(16)),(String)this.expresionesRegulares.get("and")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(17)),(String)this.expresionesRegulares.get("or")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(18)),(String)this.expresionesRegulares.get("delimitadores")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(19)),(String)this.expresionesRegulares.get("numero")));
+        ((EstadoTransicion)this.estados.get(0)).addTransicion(new Path(((EstadoTransicion) this.estados.get(22)),(String)this.expresionesRegulares.get("comillas")));
+
+        //q1 a q10
+        ((EstadoTransicion)this.estados.get(1)).addTransicion(new Path(((EstadoTransicion) this.estados.get(2)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(2)).addTransicion(new Path(((EstadoTransicion) this.estados.get(3)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(3)).addTransicion(new Path(((EstadoTransicion) this.estados.get(4)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(4)).addTransicion(new Path(((EstadoTransicion) this.estados.get(5)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(5)).addTransicion(new Path(((EstadoTransicion) this.estados.get(6)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(6)).addTransicion(new Path(((EstadoTransicion) this.estados.get(7)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(7)).addTransicion(new Path(((EstadoTransicion) this.estados.get(8)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(8)).addTransicion(new Path(((EstadoTransicion) this.estados.get(9)),(String)this.expresionesRegulares.get("identificadorChar")));
+        ((EstadoTransicion)this.estados.get(9)).addTransicion(new Path(((EstadoTransicion) this.estados.get(10)),(String)this.expresionesRegulares.get("identificadorChar")));
+
+        // q11 none
+        // q12, q13, q15, q16, q17 a q14 (q14 no paths)
+        ((EstadoTransicion)this.estados.get(12)).addTransicion(new Path(((EstadoTransicion) this.estados.get(14)),(String)this.expresionesRegulares.get("igual")));
+        ((EstadoTransicion)this.estados.get(13)).addTransicion(new Path(((EstadoTransicion) this.estados.get(14)),(String)this.expresionesRegulares.get("igual")));
+        ((EstadoTransicion)this.estados.get(15)).addTransicion(new Path(((EstadoTransicion) this.estados.get(14)),(String)this.expresionesRegulares.get("igual")));
+        ((EstadoTransicion)this.estados.get(16)).addTransicion(new Path(((EstadoTransicion) this.estados.get(14)),(String)this.expresionesRegulares.get("and")));
+        ((EstadoTransicion)this.estados.get(17)).addTransicion(new Path(((EstadoTransicion) this.estados.get(14)),(String)this.expresionesRegulares.get("or")));
+
+        // q18 none
+
+        // q19, q20, q21
+
+        ((EstadoTransicion)this.estados.get(19)).addTransicion(new Path(((EstadoTransicion) this.estados.get(19)),(String)this.expresionesRegulares.get("numero")));
+        ((EstadoTransicion)this.estados.get(19)).addTransicion(new Path(((EstadoTransicion) this.estados.get(20)),(String)this.expresionesRegulares.get("puntoDecimal")));
+
+        ((EstadoTransicion)this.estados.get(20)).addTransicion(new Path(((EstadoTransicion) this.estados.get(21)),(String)this.expresionesRegulares.get("numero")));
+        ((EstadoTransicion)this.estados.get(21)).addTransicion(new Path(((EstadoTransicion) this.estados.get(21)),(String)this.expresionesRegulares.get("numero")));
+
+        // q22, q23
+        ((EstadoTransicion)this.estados.get(22)).addTransicion(new Path(((EstadoTransicion) this.estados.get(22)),(String)this.expresionesRegulares.get("cadena")));
+        ((EstadoTransicion)this.estados.get(22)).addTransicion(new Path(((EstadoTransicion) this.estados.get(23)),(String)this.expresionesRegulares.get("comillas")));
+
+        // q50
+        ((EstadoTransicion)this.estados.get(50)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+
+        // identificadores al error ej. ass.123
+        ((EstadoTransicion)this.estados.get(1)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(2)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(3)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(4)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(5)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(6)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(7)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(8)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(9)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(10)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+
+        //numeros al error ej. 12asa
+        ((EstadoTransicion)this.estados.get(19)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(20)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+        ((EstadoTransicion)this.estados.get(21)).addTransicion(new Path(((EstadoTransicion) this.estados.get(50)),(String)this.expresionesRegulares.get("error")));
+
+        this.estadoActual = (EstadoTransicion) this.estados.get(0);
+        //System.out.println(this.estados.get(22));
+    }
+
     private void inicializarER() //Inicializar Expresiones Regulares
     {
         this.expresionesRegulares = new Hashtable();
@@ -30,8 +159,10 @@ public class DiagramaTrancisiones
         this.expresionesRegulares.put("mayorOMenor", "[><]");
         this.expresionesRegulares.put("delimitadores", "[;|,|\\(|\\)|\\[|\\]|\\{|\\}]");
         this.expresionesRegulares.put("puntoDecimal", "\\.");
-        this.expresionesRegulares.put("comillas", '"');
+        this.expresionesRegulares.put("comillas", "\"");
         this.expresionesRegulares.put("cadena", "[^\"]");
+        this.expresionesRegulares.put("error", "[^\\+\\-\\*\\/\\%=&\\|!><;,\\(\\)\\[\\]\\{\\}\"]");
+
 
         //System.out.println(evaluarExpresion(" ", (String) this.expresionesRegulares.get("cadena")));
     }
@@ -54,32 +185,88 @@ public class DiagramaTrancisiones
         this.tablaPalabrasReservadas.put("false", "false");
     }
 
-    private void inicializarDelimitadores()
-    {
-        this.tablaDelimitadores = new Hashtable();
-        this.tablaDelimitadores.put(";",";");
-        this.tablaDelimitadores.put(",",",");
-        this.tablaDelimitadores.put("(","(");
-        this.tablaDelimitadores.put(")",")");
-        this.tablaDelimitadores.put("[","[");
-        this.tablaDelimitadores.put("]","]");
-        this.tablaDelimitadores.put("{","{");
-    }
-
-    public void analizarLexema(String lexema) //cambiar void por tupla de ser posible, caso contrario cambiarlo a List<String, String>
+    public List<Lexema> analizarLexema(String lexema, int fila, int columna_ini) //cambiar void por tupla de ser posible, caso contrario cambiarlo a List<String, String>
     {
 
+        this.estadoActual = (EstadoTransicion) this.estados.get(0);
+        List<Lexema> lexemas = new ArrayList<Lexema>();
+        boolean otro = true;
+        String lex = "";
+        char ch = ' ';
+        int columna = columna_ini;
+
+        // para cada caracter
+        for (int i = 0; i < lexema.length(); i++)
+        {
+            ch = lexema.charAt(i);
+            // otro representa si no hay match y el siguiente caracter es un separador, representa el fin de un lexema
+            otro = true;
+            //verificamos si hay match o no, si lo hay, avanzamos en estado, anotmaos el caracter y cambiamos otro a false
+            for(Path p: this.estadoActual.getTransiciones()){
+                if (evaluarExpresion(Character.toString(ch), p.input))
+                {
+                    otro = false;
+                    lex += ch;
+                    //System.out.println("match  " + ch + " with " + p.input);
+                    this.estadoActual = p.siguienteEstado;
+                    break;
+                }
+            }
+            // caso en que el ultimo caracter de la caden haga match, cambiamos otro a true para poder guardarlo como lexema
+            if (!otro && i == lexema.length()-1)
+            {
+                otro = true;
+            } else if (otro) // si el caracter no hizo match
+            {
+                // si el caracter es el ultimo y no hay nada almacenado previo ej en abs' es para cuando se analice ', luego de guardar abs como lexema
+                if (lex == "" && i == lexema.length()-1)
+                {
+                    lex += ch; // agregamos ' a lex para guardarlo como error
+                } else
+                {
+                    // caso contrario tenemos lex=abs y ch=', queremos guardar abs y analizar ' desde un inicio por ende i--
+                    i--;
+                }
+            }
+
+            if (otro) {
+
+                if (estadoActual.isEsFinal()){
+                    // si es un estado fianl, el lexema es valido y es guardado como tal
+                    String returnVal = this.estadoActual.getValorRetorno();
+
+                    if (returnVal == "identificador" && this.tablaPalabrasReservadas.get(lex) != null) {
+                        returnVal = lex;
+                    } else if (returnVal == "delimitador") {
+                        returnVal = lex;
+                    }
+
+                    //System.out.println("lexema: " + lex);
+                    lexemas.add(new Lexema(lex, returnVal, fila, columna, false));
+                } else {
+                    // si no estamos en un estado final, es un error
+                    //System.out.println("error: " + lex);
+                    lexemas.add(new Lexema(lex, "error", fila, columna, true));
+                }
+                columna++;
+                this.estadoActual = (EstadoTransicion) this.estados.get(0);
+                lex = "";
+
+            }
+        }
+        return lexemas;
     }
+
     public static boolean evaluarExpresion(String lexema, String expresionRegular) {
         boolean valido = false;
         Pattern pat = Pattern.compile(expresionRegular);
         Matcher mat = pat.matcher(lexema);
         if (mat.matches()) {
-            System.out.println("Validado");
+            //System.out.println("Validado");
             valido = true;
         }
         else {
-            System.out.println("No validado");
+            //System.out.println("No validado");
             valido = false;
         }
         return valido;

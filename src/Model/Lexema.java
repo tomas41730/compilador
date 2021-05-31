@@ -74,10 +74,10 @@ public class Lexema
 
     public String detalles(){ //Servira de variable auxiliar cuando lea desde
         //el AnalizadorLexico
-        return this.valor + "       " +
-                this.token + "       "+
-                this.fila + "         "+
-                this.columna + "        "+
+        return this.valor + "\t\t\t\t" +
+                this.token + "\t\t\t\t"+
+                this.fila + "\t\t\t"+
+                this.columna + "\t\t\t"+
                 this.error;
                 
     }
