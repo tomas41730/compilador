@@ -30,7 +30,7 @@ public class AnalizadorLexico
         //como el ejemplo en trello del COM-06
         System.out.println("Lexema      Token       Fila        Columna        Error");
         for (Lexema lexema : listaLexemas) {
-            System.out.println(lexema.detalles();
+            System.out.println(lexema.detalles());
         }
     }
 }
