@@ -1,6 +1,7 @@
 package View;
 
 import Controller.ManejoArchivos;
+import Model.AnalizadorLexico;
 import Model.DiagramaTrancisiones;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -23,9 +24,10 @@ public class Main extends Application {
 
     public static void main(String[] args)
     {
-        // List<String> lines = ManejoArchivos.leerArchivo("code.txt");
-        // System.out.println(lines);
-         DiagramaTrancisiones dt = new DiagramaTrancisiones();
+        List<String> lineas = ManejoArchivos.leerArchivo("code.txt");
+        AnalizadorLexico anaLex = new AnalizadorLexico();
+        anaLex.AnalizarCodigo(lineas);
+        anaLex.imprimirDetalles();
         launch(args);
     }
 }

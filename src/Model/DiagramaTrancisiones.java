@@ -16,7 +16,7 @@ public class DiagramaTrancisiones
         this.inicializarPR();
         this.inicializarER();
         this.inicializarDiagrama();
-        
+
         //pruebas de match:
         // if(x1==2.3){} pasa
         // if(x1.s==2.3){} pasa con x1.s como error
@@ -207,7 +207,7 @@ public class DiagramaTrancisiones
                 {
                     otro = false;
                     lex += ch;
-                    System.out.println("match  " + ch + " with " + p.input);
+                    //System.out.println("match  " + ch + " with " + p.input);
                     this.estadoActual = p.siguienteEstado;
                     break;
                 }
@@ -241,11 +241,11 @@ public class DiagramaTrancisiones
                         returnVal = lex;
                     }
 
-                    System.out.println("lexema: " + lex);
+                    //System.out.println("lexema: " + lex);
                     lexemas.add(new Lexema(lex, returnVal, fila, columna, false));
                 } else {
                     // si no estamos en un estado final, es un error
-                    System.out.println("error: " + lex);
+                    //System.out.println("error: " + lex);
                     lexemas.add(new Lexema(lex, "error", fila, columna, true));
                 }
                 columna++;
@@ -254,7 +254,6 @@ public class DiagramaTrancisiones
 
             }
         }
-        System.out.println(lexemas);
         return lexemas;
     }
 
