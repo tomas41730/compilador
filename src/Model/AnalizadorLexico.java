@@ -9,6 +9,10 @@ public class AnalizadorLexico
     private DiagramaTrancisiones dt;
     private final List<Lexema> listaLexemas;
 
+    public List<Lexema> getListaLexemas() {
+        return listaLexemas;
+    }
+
     public AnalizadorLexico()
     {
         this.dt = new DiagramaTrancisiones();
@@ -37,10 +41,15 @@ public class AnalizadorLexico
     }
     public void imprimirLexemas()
     {
+        System.out.println("┌───────────────────────────────┬─────────────────┬──────┬──────┬────────┐");
+        System.out.format("│%30s │%15s  │%4s  │%4s  │ %4s  │%n","VALOR            ", "TOKEN   ", "FILA", "COL", "ERROR");
+        System.out.println("├───────────────────────────────┼─────────────────┼──────┼──────┼────────┤");
         for (Lexema lexema:listaLexemas)
         {
-            System.out.println(lexema.toString());
+            System.out.format("│%30s │%15s  │%4s  │%4s  │ %5s  │%n",lexema.getValor(), lexema.getToken(),
+                    String.valueOf(lexema.getFila()), String.valueOf(lexema.getColumna()), lexema.isError());
         }
+        System.out.println("└───────────────────────────────┴─────────────────┴──────┴──────┴────────┘");
     }
     
     public void imprimirDetalles(){ //Este metodo intenta replicar el modelo de tabla

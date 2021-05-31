@@ -1,5 +1,9 @@
 package Model;
 
+import dnl.utils.text.table.TextTable;
+
+import java.awt.*;
+
 public class Lexema
 {
     private String valor;
@@ -71,6 +75,8 @@ public class Lexema
                 ", error=" + error +
                 '}';
     }
+
+
 
     public String detalles(){ //Servira de variable auxiliar cuando lea desde
         //el AnalizadorLexico
