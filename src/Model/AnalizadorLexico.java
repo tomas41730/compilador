@@ -5,7 +5,8 @@ import java.util.stream.*;
 
 public class AnalizadorLexico
 {
-
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[40m";
     private DiagramaTrancisiones dt;
     private final List<Lexema> listaLexemas;
 
@@ -41,15 +42,16 @@ public class AnalizadorLexico
     }
     public void imprimirLexemas()
     {
-        System.out.println("┌───────────────────────────────┬─────────────────┬──────┬──────┬────────┐");
-        System.out.format("│%30s │%15s  │%4s  │%4s  │ %4s  │%n","VALOR            ", "TOKEN   ", "FILA", "COL", "ERROR");
-        System.out.println("├───────────────────────────────┼─────────────────┼──────┼──────┼────────┤");
+        System.out.println(ANSI_BLACK+"┌───────────────────────────────┬─────────────────┬──────┬──────┬───────┐"+ANSI_RESET);
+        System.out.println(ANSI_BLACK+"│             VALOR             │      TOKEN      │ FILA │ COL. │ ERROR │"+ANSI_RESET);
+        System.out.println(ANSI_BLACK+"├───────────────────────────────┼─────────────────┼──────┼──────┼───────┤"+ANSI_RESET);
         for (Lexema lexema:listaLexemas)
         {
-            System.out.format("│%30s │%15s  │%4s  │%4s  │ %5s  │%n",lexema.getValor(), lexema.getToken(),
+            System.out.format("│%30s │%15s  │%4s  │%4s  │%6s │%n",lexema.getValor(), lexema.getToken(),
                     String.valueOf(lexema.getFila()), String.valueOf(lexema.getColumna()), lexema.isError());
+            System.out.println("├───────────────────────────────┼─────────────────┼──────┼──────┼───────┤");
         }
-        System.out.println("└───────────────────────────────┴─────────────────┴──────┴──────┴────────┘");
+        System.out.println("└───────────────────────────────┴─────────────────┴──────┴──────┴───────┘");
     }
     
     public void imprimirDetalles(){ //Este metodo intenta replicar el modelo de tabla

@@ -216,34 +216,42 @@ public class DiagramaTrancisiones
             if (!otro && i == lexema.length()-1)
             {
                 otro = true;
-            } else if (otro) // si el caracter no hizo match
+            }
+            else if (otro) // si el caracter no hizo match
             {
                 // si el caracter es el ultimo y no hay nada almacenado previo ej en abs' es para cuando se analice ', luego de guardar abs como lexema
                 if (lex == "" && i == lexema.length()-1)
                 {
                     lex += ch; // agregamos ' a lex para guardarlo como error
-                } else
+                }
+                else
                 {
                     // caso contrario tenemos lex=abs y ch=', queremos guardar abs y analizar ' desde un inicio por ende i--
                     i--;
                 }
             }
 
-            if (otro) {
-
-                if (estadoActual.isEsFinal()){
+            if (otro)
+            {
+                if (estadoActual.isEsFinal())
+                {
                     // si es un estado fianl, el lexema es valido y es guardado como tal
                     String returnVal = this.estadoActual.getValorRetorno();
 
-                    if (returnVal == "identificador" && this.tablaPalabrasReservadas.get(lex) != null) {
+                    if (returnVal == "identificador" && this.tablaPalabrasReservadas.get(lex) != null)
+                    {
                         returnVal = lex;
-                    } else if (returnVal == "delimitador") {
+                    }
+                    else if (returnVal == "delimitador")
+                    {
                         returnVal = lex;
                     }
 
                     //System.out.println("lexema: " + lex);
                     lexemas.add(new Lexema(lex, returnVal, fila, columna, false));
-                } else {
+                }
+                else
+                {
                     // si no estamos en un estado final, es un error
                     //System.out.println("error: " + lex);
                     lexemas.add(new Lexema(lex, "error", fila, columna, true));
@@ -251,22 +259,22 @@ public class DiagramaTrancisiones
                 columna++;
                 this.estadoActual = (EstadoTransicion) this.estados.get(0);
                 lex = "";
-
             }
         }
         return lexemas;
     }
 
-    public static boolean evaluarExpresion(String lexema, String expresionRegular) {
+    public static boolean evaluarExpresion(String lexema, String expresionRegular)
+    {
         boolean valido = false;
         Pattern pat = Pattern.compile(expresionRegular);
         Matcher mat = pat.matcher(lexema);
-        if (mat.matches()) {
-            //System.out.println("Validado");
+        if (mat.matches())
+        {
             valido = true;
         }
-        else {
-            //System.out.println("No validado");
+        else
+        {
             valido = false;
         }
         return valido;

@@ -19,17 +19,17 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("ANALIZADOR LEXICO");
+        primaryStage.setScene(new Scene(root, 1264, 757));
         primaryStage.show();
     }
     public static void main(String[] args)
     {
-        List<String> lineas = ManejoArchivos.leerArchivo("D:\\Tomas\\Documentos\\Compilación\\Proyecto\\ficheros\\ejemplo.txt");
-        AnalizadorLexico anaLex = new AnalizadorLexico();
-        anaLex.AnalizarCodigo(lineas);
+        //List<String> lineas = ManejoArchivos.leerArchivo("D:\\Tomas\\Documentos\\Compilación\\Proyecto\\ficheros\\ejemplo.txt");
+        //AnalizadorLexico anaLex = new AnalizadorLexico();
+        //anaLex.AnalizarCodigo(lineas);
         //anaLex.imprimirDetalles();
-        anaLex.imprimirLexemas();
-        //launch(args);
+        //anaLex.imprimirLexemas();
+        launch(args);
     }
 }
