@@ -2,10 +2,13 @@
 
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane id="arbolView" fx:id="arbolView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="786.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ControllerArbolGUI">
    <children>
-      <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="527.0" prefWidth="758.0" />
+      <ScrollPane layoutX="-1.0" layoutY="-1.0" prefHeight="553.0" prefWidth="786.0">
+         <content>
+            <Pane id="canvas" fx:id="canvas" prefHeight="546.0" prefWidth="777.0" />
+         </content></ScrollPane>
    </children>
 </AnchorPane>

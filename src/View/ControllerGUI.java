@@ -1,8 +1,10 @@
 package View;
 
+import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,10 +32,13 @@ public class ControllerGUI implements Initializable
     TableColumn tcColumna;
     TableColumn tcError;
 
+    private FXMLLoader loader;
+
     public ControllerGUI()
     {
         tabPane = new TabPane();
         tbvDetalles = new TableView();
+
     }
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -78,6 +83,13 @@ public class ControllerGUI implements Initializable
     public void btnEvaluar()
     {
         analex();
+    }
+    @FXML
+    public void btnArbol()
+    {
+        FormsOperations formsOperations = new FormsOperations();
+        FXMLLoader fXMLLoader = formsOperations.OpenForm("Arbol de derivacion", "/View/arbol.fxml");
+        ControllerArbolGUI arbolDerivacion = fXMLLoader.getController();
     }
     public void inicializarTBVDetalles()
     {
