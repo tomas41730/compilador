@@ -57,16 +57,27 @@ public class ControllerGUI implements Initializable
         tabPane.getTabs().add(fileTab);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         codigo = "";
+
+        this.analex();
+
     }
-    @FXML
-    public void btnEvaluar()
-    {
-        tbvDetalles.getItems().removeAll();
+
+    private void analex () {
+
+        // ex eval
+        tbvDetalles.getItems().clear();
         List<String> lineas = ManejoArchivos.leerArchivo(path);
         AnalizadorLexico anaLex = new AnalizadorLexico();
         anaLex.AnalizarCodigo(lineas);
         anaLex.imprimirLexemas();
         anaLex.getListaLexemas().forEach(lexema -> tbvDetalles.getItems().add(lexema));
+
+    }
+
+    @FXML
+    public void btnEvaluar()
+    {
+        analex();
     }
     public void inicializarTBVDetalles()
     {

@@ -1,9 +1,5 @@
 package Model;
 
-import dnl.utils.text.table.TextTable;
-
-import java.awt.*;
-
 public class Lexema
 {
     private String valor;

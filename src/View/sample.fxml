@@ -58,7 +58,8 @@
             </ScrollPane>
          </items>
       </SplitPane>
-      <Button fx:id="btnEvaluar" layoutX="833.0" layoutY="37.0" mnemonicParsing="false" onAction="#btnEvaluar" text="Evaluate" />
+      <Button fx:id="btnCompilar" layoutX="833.0" layoutY="37.0" mnemonicParsing="false" onAction="#btnEvaluar" text="Compilar" />
+      <Button fx:id="btnArbol" layoutX="903.0" layoutY="37.0" mnemonicParsing="false" onAction="#btnEvaluar" text="Ver arbol" />
       <Label layoutX="413.0" layoutY="33.0" prefHeight="34.0" prefWidth="243.0" text="ANALIZADOR LÉXICO">
          <font>
             <Font name="System Bold" size="23.0" />
