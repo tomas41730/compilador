@@ -1,8 +1,11 @@
 package Model;
 
+import Config.DictManager;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import Config.DictManager;
 
 public class DiagramaTrancisiones
 {
@@ -17,13 +20,6 @@ public class DiagramaTrancisiones
         this.inicializarER();
         this.inicializarDiagrama();
 
-        //pruebas de match:
-        // if(x1==2.3){} pasa
-        // if(x1.s==2.3){} pasa con x1.s como error
-        //ssas'=3 pasa con ssas' con error
-        // 21as pasa con 21as como error
-
-        //this.analizarLexema("if(x==1){", 2, 0);
     }
 
     private void inicializarDiagrama()
@@ -233,10 +229,10 @@ public class DiagramaTrancisiones
 
             if (otro)
             {
+                String returnVal = this.estadoActual.getValorRetorno();
                 if (estadoActual.isEsFinal())
                 {
                     // si es un estado fianl, el lexema es valido y es guardado como tal
-                    String returnVal = this.estadoActual.getValorRetorno();
 
                     if (returnVal == "identificador" && this.tablaPalabrasReservadas.get(lex) != null)
                     {
@@ -248,13 +244,14 @@ public class DiagramaTrancisiones
                     }
 
                     //System.out.println("lexema: " + lex);
-                    lexemas.add(new Lexema(lex, returnVal, fila, columna, false));
+                    lexemas.add(new Lexema(lex, returnVal, (String) DictManager.tokenToSimbol().get(returnVal), fila, columna, false));
                 }
                 else
                 {
+                    returnVal = "error";
                     // si no estamos en un estado final, es un error
                     //System.out.println("error: " + lex);
-                    lexemas.add(new Lexema(lex, "error", fila, columna, true));
+                    lexemas.add(new Lexema(lex, returnVal, (String) DictManager.tokenToSimbol().get(returnVal), fila, columna, true));
                 }
                 columna++;
                 this.estadoActual = (EstadoTransicion) this.estados.get(0);

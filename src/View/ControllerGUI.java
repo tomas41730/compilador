@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Config.DictManager;
+
 public class ControllerGUI implements Initializable
 {
     @FXML
@@ -28,6 +30,7 @@ public class ControllerGUI implements Initializable
     public String codigo = "";
     TableColumn tcValor;
     TableColumn tcToken;
+    TableColumn tcSimbolo;
     TableColumn tcFila;
     TableColumn tcColumna;
     TableColumn tcError;
@@ -53,6 +56,7 @@ public class ControllerGUI implements Initializable
         fileChooser.setTitle("Upload File Path");
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
         path = file.getPath();
+        System.out.println(path);
         ManejoArchivos.leerArchivo(path).forEach(linea -> codigo =  codigo + String.valueOf(i.getAndIncrement())+"\t"+linea + "\n");
         TextArea txtAreaCodigo = new TextArea();
         txtAreaCodigo.setPrefSize(916.0, 681.0);
@@ -97,19 +101,21 @@ public class ControllerGUI implements Initializable
 
         tcValor = new TableColumn("Valor");
         tcToken = new TableColumn("Token");
+        tcSimbolo = new TableColumn("Simbolo");
         tcFila = new TableColumn("Fila");
         tcColumna = new TableColumn("Columna");
         tcError = new TableColumn("Error");
 
-        tbvDetalles.getColumns().addAll(tcValor, tcToken, tcFila, tcColumna, tcError);
+        tbvDetalles.getColumns().addAll(tcValor, tcToken, tcSimbolo, tcFila, tcColumna, tcError);
 
         tcValor.setCellValueFactory(new PropertyValueFactory<>("valor"));
         tcToken.setCellValueFactory(new PropertyValueFactory<>("token"));
+        tcSimbolo.setCellValueFactory(new PropertyValueFactory<>("simbolo"));
         tcFila.setCellValueFactory(new PropertyValueFactory<>("fila"));
         tcColumna.setCellValueFactory(new PropertyValueFactory<>("columna"));
         tcError.setCellValueFactory(new PropertyValueFactory<>("error"));
 
-        tcValor.setMinWidth(180.0);
+        tcValor.setMinWidth(80.0);
         tcFila.setMaxWidth(45.0);
         tcColumna.setMaxWidth(45.0);
         tcError.setMaxWidth(45.0);

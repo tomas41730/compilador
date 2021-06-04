@@ -5,31 +5,22 @@ import java.util.List;
 
 public class ArbolDerivacion {
 
-    private String id;
-    private boolean terminal;
+    private TerminoGLC termino;
     private Dictionary reglas;
     private List<ArbolDerivacion> hijos;
 
-    public ArbolDerivacion(String id, boolean terminal, Dictionary reglas) {
-        this.id = id;
-        this.terminal = terminal;
+    public ArbolDerivacion(TerminoGLC termino, Dictionary reglas, List<ArbolDerivacion> hijos) {
+        this.termino = termino;
         this.reglas = reglas;
+        this.hijos = hijos;
     }
 
-    public String getId() {
-        return id;
+    public TerminoGLC getTermino() {
+        return termino;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isTerminal() {
-        return terminal;
-    }
-
-    public void setTerminal(boolean terminal) {
-        this.terminal = terminal;
+    public void setTermino(TerminoGLC termino) {
+        this.termino = termino;
     }
 
     public Dictionary getReglas() {
@@ -38,5 +29,13 @@ public class ArbolDerivacion {
 
     public void setReglas(Dictionary reglas) {
         this.reglas = reglas;
+    }
+
+    public List<ArbolDerivacion> getHijos() {
+        return hijos;
+    }
+
+    public void setHijos(List<ArbolDerivacion> hijos) {
+        this.hijos = hijos;
     }
 }

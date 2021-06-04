@@ -4,18 +4,16 @@ public class Lexema
 {
     private String valor;
     private String token;
+    private String simbolo;
     private int fila;
     private int columna;
     private boolean error;
 
-    public Lexema()
-    {
 
-    }
-    public Lexema(String valor, String token, int fila, int columna, boolean error)
-    {
+    public Lexema(String valor, String token, String simbolo, int fila, int columna, boolean error) {
         this.valor = valor;
         this.token = token;
+        this.simbolo = simbolo;
         this.fila = fila;
         this.columna = columna;
         this.error = error;
@@ -35,6 +33,14 @@ public class Lexema
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getSimbolo() {
+        return simbolo;
+    }
+
+    public void setSimbolo(String simbolo) {
+        this.simbolo = simbolo;
     }
 
     public int getFila() {
@@ -61,23 +67,11 @@ public class Lexema
         this.error = error;
     }
 
-    @Override
-    public String toString() {
-        return "Lexema{" +
-                "valor='" + valor + '\'' +
-                ", token='" + token + '\'' +
-                ", fila=" + fila +
-                ", columna=" + columna +
-                ", error=" + error +
-                '}';
-    }
-
-
-
     public String detalles(){ //Servira de variable auxiliar cuando lea desde
         //el AnalizadorLexico
         return this.valor + "\t\t\t\t" +
                 this.token + "\t\t\t\t"+
+                this.simbolo + "\t\t\t"+
                 this.fila + "\t\t\t"+
                 this.columna + "\t\t\t"+
                 this.error;
