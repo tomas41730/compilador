@@ -49,7 +49,7 @@ public class DiagramaTrancisiones
         this.estados.put(11, (new EstadoTransicion(11, "Op. Aritmetico", true)));
 
         // Asignacion
-        this.estados.put(12, (new EstadoTransicion(12, "Asignacion", true)));
+        this.estados.put(12, (new EstadoTransicion(12, "igualdad", true)));
 
         // Op. Logico
         this.estados.put(13, (new EstadoTransicion(13, "Op. Logico", true)));
@@ -68,7 +68,7 @@ public class DiagramaTrancisiones
 
         //string
         this.estados.put(22, (new EstadoTransicion(22, "", false)));
-        this.estados.put(23, (new EstadoTransicion(23, "string", true)));
+        this.estados.put(23, (new EstadoTransicion(23, "cadena", true)));
 
         //error
         this.estados.put(50, (new EstadoTransicion(50, "error", false)));
