@@ -406,6 +406,22 @@ public class GLC {
 
     }
 
+    public Dictionary getTerminales() {
+        return terminales;
+    }
+
+    public void setTerminales(Dictionary terminales) {
+        this.terminales = terminales;
+    }
+
+    public Dictionary getNoTerminales() {
+        return noTerminales;
+    }
+
+    public void setNoTerminales(Dictionary noTerminales) {
+        this.noTerminales = noTerminales;
+    }
+
     private void agregarRegla(String reglaID, List<String> contenido)
     {
 
