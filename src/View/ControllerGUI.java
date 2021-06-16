@@ -3,6 +3,7 @@ package View;
 import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
+import Model.Error;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -77,8 +78,9 @@ public class ControllerGUI implements Initializable
         tbvDetalles.getItems().clear();
         List<String> lineas = ManejoArchivos.leerArchivo(path);
         AnalizadorLexico anaLex = new AnalizadorLexico();
-        anaLex.AnalizarCodigo(lineas);
-        anaLex.imprimirLexemas();
+        List<Error> errores = anaLex.AnalizarCodigo(lineas);
+        //anaLex.imprimirLexemas();
+        errores.forEach(System.out::println);
         anaLex.getListaLexemas().forEach(lexema -> tbvDetalles.getItems().add(lexema));
 
     }

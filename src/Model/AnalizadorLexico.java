@@ -20,10 +20,11 @@ public class AnalizadorLexico
         this.listaLexemas = new LinkedList<Lexema>();
     }
 
-    public void AnalizarCodigo(List<String> lineasCodigo) //Para cada palabra en cada linea analizar con metodos
+    public List<Error> AnalizarCodigo(List<String> lineasCodigo) //Para cada palabra en cada linea analizar con metodos
     {                                                     //del diagrama de transiciones e insertar en lista lexemas
         int fila = -1;
         int columna = 0;
+        List<Error> errores = new ArrayList<Error>();
         for(String linea: lineasCodigo){
             fila++;
             columna = 0;
@@ -31,7 +32,7 @@ public class AnalizadorLexico
 
             for (String palabra: palabras) {
                 if (palabra != "") {
-                    List<Lexema> aux = this.dt.analizarLexema(palabra, fila, columna);
+                    List<Lexema> aux = this.dt.analizarLexema(palabra, fila, columna, errores);
                     columna += aux.size();
                     this.listaLexemas.addAll(aux);
                     //System.out.println("aux: " + aux);
@@ -39,6 +40,7 @@ public class AnalizadorLexico
                 }
             }
         }
+        return errores;
     }
     public void imprimirLexemas()
     {
