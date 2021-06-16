@@ -26,24 +26,61 @@ public class GLC {
         this.dolar = new GLCTerm(true, "$", "");
         this.alreadyLooking = new ArrayList<>();
         this.genSiguientes();
+
+        for (GLCRule regla : this.reglasGLCporNumero) {
+
+            regla.setSiguientes(((GLCRule) this.reglasGLCporLetra.get(regla.getId())).getSiguientes());
+
+        }
+
+        ((Hashtable) this.reglasGLCporLetra).forEach((k, v) -> {
+            System.out.println("Para la regla : " + k + " se tienen los primeros: { " + ((GLCRule) v).printPrimeros() + " } y  los siguientes: { " + ((GLCRule) v).printSegundos() + " }");
+        });
     }
 
     private void genPrimeros(){
 
-        ((Hashtable) this.reglasGLCporLetra).forEach((k, v) -> {
+        /*((Hashtable) this.reglasGLCporLetra).forEach((k, v) -> {
             this.genPrimerosOfRule((GLCRule) v);
-        });
+        });*/
+
+        List<GLCRule> pending = new ArrayList<>(this.reglasGLCporNumero);
+        while (pending.size() > 0) {
+
+            //System.out.println("Pending size " + pending.size());
+            GLCRule regla = pending.get(0);
+            //System.out.println(regla.getId());
+            pending.remove(regla);
+
+            this.genPrimerosOfRule((GLCRule) this.reglasGLCporLetra.get(regla.getId()));
+
+            if (((GLCRule) this.reglasGLCporLetra.get(regla.getId())).getPrimeros().isEmpty()) {
+
+                pending.add(regla);
+
+            }
+
+        }
+
     }
 
     private void genSiguientes(){
 
-        /*((Hashtable) this.reglasGLCporLetra).forEach((k, v) -> {
-            this.genSiguientesOfRule((GLCRule) v);
-        });*/
+        List<GLCRule> pending = new ArrayList<>(this.reglasGLCporNumero);
 
-        for (GLCRule regla : this.reglasGLCporNumero) {
+        while (!(pending.isEmpty())) {
 
+            //System.out.println("Pending size " + pending.size());
+            GLCRule regla = pending.get(0);
+            //System.out.println(regla.getId());
+            pending.remove(regla);
             this.genSiguientesOfRule((GLCRule) this.reglasGLCporLetra.get(regla.getId()));
+
+            if (((GLCRule) this.reglasGLCporLetra.get(regla.getId())).getPrimeros().isEmpty()) {
+
+                pending.add(regla);
+
+            }
 
         }
 
@@ -186,7 +223,7 @@ public class GLC {
 
             rule.setSiguientes(nexts);
             this.alreadyLooking.remove(rule.getId());
-            System.out.println("Para la regla " + rule.getId() + " se tienen los siguientes: " + rule.printSegundos());
+            //System.out.println("Para la regla " + rule.getId() + " se tienen los siguientes: " + rule.printSegundos());
 
         }
 
@@ -221,11 +258,15 @@ public class GLC {
         if (rule.getPrimeros().size() == 0){
 
             this.alreadyLooking.add(rule.getId());
-            //System.out.println(rule.getId());
+            //System.out.println("Primeros de la relga: " + rule.getId());
+
+            //System.out.println("Already looking for: " + this.alreadyLooking.toString());
 
             List<GLCTerm> firsts = new ArrayList<>();
 
             for(GLCoption option: rule.getOpciones()){
+
+                //System.out.println("Buscando primeros de la relga " + rule.getId() + " en la opcion: " + option.printOpcion());
 
                 if (option.getPrimerTermino().isTerminal()) {
 
@@ -282,7 +323,7 @@ public class GLC {
 
             rule.setPrimeros(firsts);
             this.alreadyLooking.remove(rule.getId());
-            System.out.println("Para la regla " + rule.getId() + " se tienen los primeros: " + rule.printPrimeros());
+
         }
 
     }
