@@ -542,4 +542,19 @@ public class GLC {
 
     }
 
+    public List<GLCRule> getReglasGLCporNumero() {
+        return reglasGLCporNumero;
+    }
+
+    public void setReglasGLCporNumero(List<GLCRule> reglasGLCporNumero) {
+        this.reglasGLCporNumero = reglasGLCporNumero;
+    }
+
+    public GLCRule getInitialRule() {
+        return initialRule;
+    }
+
+    public void setInitialRule(GLCRule initialRule) {
+        this.initialRule = initialRule;
+    }
 }
