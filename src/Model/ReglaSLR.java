@@ -16,6 +16,12 @@ public class ReglaSLR {
 
     }
 
+    public GLCTerm getTransitionVal() {
+
+        return this.regla.getOpciones().get(0).getTerminos().get(this.index);
+
+    }
+
     public GLCRule getRegla() {
         return regla;
     }

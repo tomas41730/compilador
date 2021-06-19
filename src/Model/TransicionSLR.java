@@ -2,7 +2,14 @@ package Model;
 
 public class TransicionSLR {
 
-    private EstadoSLR destino;
+    private int destino;
     private String input;
+
+    public TransicionSLR (int destino, String input) {
+
+        this.destino = destino;
+        this.input = input;
+
+    }
 
 }
