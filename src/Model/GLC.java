@@ -510,11 +510,11 @@ public class GLC {
         });
 
         System.out.println("Reglas separadas: ");
-
+        int x = 0;
         for (GLCRule regla: this.reglasGLCporNumero) {
-
+            System.out.print(x + ". ");
             System.out.println(regla.printRegla());
-
+            x++;
         }
 
 

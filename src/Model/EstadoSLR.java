@@ -14,9 +14,50 @@ public class EstadoSLR {
         this.id = id;
         this.reglas = new ArrayList<>();
         this.reglas.add(new ReglaSLR(reglaIncial, -1, 0));
-
+        this.transiciones = new ArrayList<>();
         this.expandir(listaReglas);
 
+    }
+
+    public EstadoSLR (int id, List<GLCRule> listaReglas, List<ReglaSLR> reglasIniciales) {
+        this.id = id;
+        this.reglas = new ArrayList<>(reglasIniciales);
+        this.transiciones = new ArrayList<>();
+        this.expandir(listaReglas);
+    }
+
+    private boolean containsRule(ReglaSLR reglaB) {
+
+        for (ReglaSLR regla: this.reglas) {
+            if (regla.getNumeroRegla() == reglaB.getNumeroRegla() && regla.getIndex() == reglaB.getIndex()){
+
+                return true;
+
+            }
+        }
+
+        return false;
+
+    }
+
+    public boolean equals(EstadoSLR otroEstado){
+
+        boolean bool = true;
+        int size = 0;
+        for (ReglaSLR regla: otroEstado.getReglas()){
+            size ++;
+            if (!(this.containsRule(regla))){
+                bool = false;
+                break;
+            }
+
+        }
+
+        if (size != this.reglas.size()){
+            bool = false;
+        }
+
+        return bool;
     }
 
     public  String printReglas() {
@@ -32,6 +73,12 @@ public class EstadoSLR {
         s = s + "}";
 
         return s;
+
+    }
+
+    public void agregarTransicion (int destino, String input) {
+
+        this.transiciones.add(new TransicionSLR(destino, input));
 
     }
 
@@ -61,46 +108,48 @@ public class EstadoSLR {
 
     private void expandir (List<GLCRule> listaReglas) {
 
-        System.out.println("expandiendo el estado : " + this.id);
+        //System.out.println("expandiendo el estado : " + this.id);
         List<ReglaSLR> pending = new ArrayList<>(this.reglas);
 
         List<String> done = new ArrayList<>();
 
         while (pending.size() > 0) {
 
-            System.out.println(pending.size() + " reglas pendientes.");
+            //System.out.println(pending.size() + " reglas pendientes.");
             ReglaSLR analizando = pending.get(0);
             pending.remove(0);
 
-            if (!(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).isTerminal())) {
+            if (analizando.getIndex() < analizando.getRegla().getOpciones().get(0).getTerminos().size()) {
 
-                if (!(done.contains(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId()))) {
-                    System.out.println("Buscando reglas a agregar relacionadas con: " + analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId());
-                    // si el termino no es terminal
+                if (!(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).isTerminal())) {
 
-                    done.add(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId());
+                    if (!(done.contains(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId()))) {
+                        //System.out.println("Buscando reglas a agregar relacionadas con: " + analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId());
+                        // si el termino no es terminal
 
-                    int index = -1;
+                        done.add(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId());
 
-                    for (GLCRule reglaposible : listaReglas) {
+                        int index = -1;
 
-                        index++;
+                        for (GLCRule reglaposible : listaReglas) {
 
-                        System.out.println("Comparando con " + reglaposible.getId());
+                            index++;
 
-                        if (reglaposible.getId().equals(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId())) {
-                            System.out.println("Agregando Regla");
-                            ReglaSLR nuevaregla = new ReglaSLR(reglaposible, index, 0);
-                            if (!(this.reglas.contains(nuevaregla))) {
-                                this.reglas.add(nuevaregla);
-                                pending.add(new ReglaSLR(reglaposible, index, 0));
+                            //System.out.println("Comparando con " + reglaposible.getId());
+
+                            if (reglaposible.getId().equals(analizando.getRegla().getOpciones().get(0).getTerminos().get(analizando.getIndex()).getId())) {
+                                //System.out.println("Agregando Regla");
+                                ReglaSLR nuevaregla = new ReglaSLR(reglaposible, index, 0);
+                                if (!(this.reglas.contains(nuevaregla))) {
+                                    this.reglas.add(nuevaregla);
+                                    pending.add(new ReglaSLR(reglaposible, index, 0));
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
             }
-
         }
 
     }
