@@ -98,7 +98,7 @@ public class GLC {
             //System.out.println("Generando los siguientes de: " + rule.getId());
             List<GLCTerm> nexts = new ArrayList<>();
 
-            if (rule.isInicial() || this.alreadyLooking.contains(this.initialRule.getId())) {
+            if (rule.isInicial()) {
 
                 nexts.add(this.dolar);
 
@@ -116,9 +116,39 @@ public class GLC {
                 if (index == opcion.getTerminos().size()-1) {
 
                     //if (opcion.getRegla() != rule){
-                        if (!(this.alreadyLooking.contains(opcion.getRegla().getId()))) {
+                    if (!(this.alreadyLooking.contains(opcion.getRegla().getId()))) {
 
-                            this.genSiguientesOfRule(opcion.getRegla());
+                        this.genSiguientesOfRule(opcion.getRegla());
+
+                    }
+
+                    for (GLCTerm termino : opcion.getRegla().getSiguientes()) {
+
+                        if (!(nexts.contains(termino))) {
+
+                            nexts.add(termino);
+
+                        }
+
+                    }
+                    //}
+
+                } else {
+
+                    while (index != -1) {
+
+                        //System.out.println("Index: " + index + " de la opcion: " + opcion.getId() + " de la regla: " + opcion.getRegla().getId());
+
+                        if (index == opcion.getTerminos().size()-1) {
+                            //System.out.println("if");
+                            //if (opcion.getRegla() != rule){
+
+                            if (!(this.alreadyLooking.contains(opcion.getRegla().getId()))) {
+
+                                this.genSiguientesOfRule(opcion.getRegla());
+
+                            }
+
                             for (GLCTerm termino : opcion.getRegla().getSiguientes()) {
 
                                 if (!(nexts.contains(termino))) {
@@ -128,50 +158,53 @@ public class GLC {
                                 }
 
                             }
-                        }
-                    //}
 
-                } else {
+                            break;
 
-                    index++;
+                            //}
 
-                    //System.out.println("de la regla " + opcion.getRegla().getId() + " opcion " + opcion.getId());
-                    //System.out.println("opcion: " + opcion.printOpcion() + " index " + index);
-                    if (opcion.getTerminos().get(index).isTerminal()) {
+                        } else {
 
-                        if (!(nexts.contains(opcion.getTerminos().get(index)))) {
-
-                            nexts.add(opcion.getTerminos().get(index));
-
-                        }
-
-                    } else {
-
-                        //System.out.println("ELSE en la relga " + rule.getId() + " de la opcion " + opcion.printOpcion());
-
-                        for (GLCTerm termino : ((GLCRule) this.reglasGLCporLetra.get((opcion.getTerminos().get(index)).getId())).getPrimeros()) {
-
-                            if (!(nexts.contains(termino))) {
-
-                                nexts.add(termino);
-
-                            }
-
-                        }
-
-
-
-                        while (nexts.contains(this.terminales.get("eps"))) {
-
-                            nexts.remove(this.terminales.get("eps"));
                             index++;
-                            if (index == opcion.getTerminos().size()) {
-                                //System.out.println("if");
-                                //if (opcion.getRegla() != rule){
+                            //System.out.println("de la regla " + opcion.getRegla().getId() + " opcion " + opcion.getId());
+                            //System.out.println("opcion: " + opcion.printOpcion() + " index " + index);
+                            if (opcion.getTerminos().get(index).isTerminal()) {
 
-                                    if (!(this.alreadyLooking.contains(opcion.getRegla().getId()))) {
+                                if (!(nexts.contains(opcion.getTerminos().get(index)))) {
 
-                                        this.genSiguientesOfRule(opcion.getRegla());
+                                    nexts.add(opcion.getTerminos().get(index));
+
+                                }
+
+                            } else {
+
+                                //System.out.println("ELSE en la relga " + rule.getId() + " de la opcion " + opcion.printOpcion());
+
+                                for (GLCTerm termino : ((GLCRule) this.reglasGLCporLetra.get((opcion.getTerminos().get(index)).getId())).getPrimeros()) {
+
+                                    if (!(nexts.contains(termino))) {
+
+                                        nexts.add(termino);
+
+                                    }
+
+                                }
+
+
+                                while (nexts.contains(this.terminales.get("eps"))) {
+
+                                    nexts.remove(this.terminales.get("eps"));
+                                    index++;
+                                    if (index == opcion.getTerminos().size()) {
+                                        //System.out.println("if");
+                                        //if (opcion.getRegla() != rule){
+
+                                        if (!(this.alreadyLooking.contains(opcion.getRegla().getId()))) {
+
+                                            this.genSiguientesOfRule(opcion.getRegla());
+
+                                        }
+
                                         for (GLCTerm termino : opcion.getRegla().getSiguientes()) {
 
                                             if (!(nexts.contains(termino))) {
@@ -182,41 +215,45 @@ public class GLC {
 
                                         }
 
-                                    }
+                                        //}
 
-                                //}
+                                    } else {
+                                        //System.out.println("else");
+                                        if (opcion.getTerminos().get(index).isTerminal()) {
 
-                            } else {
-                                //System.out.println("else");
-                                if (opcion.getTerminos().get(index).isTerminal()) {
+                                            if (!(nexts.contains(opcion.getTerminos().get(index)))) {
 
-                                    if (!(nexts.contains(opcion.getTerminos().get(index)))) {
+                                                nexts.add(opcion.getTerminos().get(index));
 
-                                        nexts.add(opcion.getTerminos().get(index));
+                                            }
+                                        } else {
 
-                                    }
-                                } else {
+                                            if (!(this.alreadyLooking.contains(opcion.getTerminos().get(index).getId()))) {
+                                                this.genSiguientesOfRule((GLCRule) this.reglasGLCporLetra.get(opcion.getTerminos().get(index).getId()));
 
-                                    if (!(this.alreadyLooking.contains(opcion.getTerminos().get(index).getId()))) {
-                                        this.genSiguientesOfRule((GLCRule) this.reglasGLCporLetra.get(opcion.getTerminos().get(index).getId()));
-                                        for (GLCTerm termino : ((GLCRule) this.reglasGLCporLetra.get(opcion.getTerminos().get(index).getId())).getSiguientes()) {
+                                            }
 
-                                            if (!(nexts.contains(termino))) {
+                                            for (GLCTerm termino : ((GLCRule) this.reglasGLCporLetra.get(opcion.getTerminos().get(index).getId())).getSiguientes()) {
 
-                                                nexts.add(termino);
+                                                if (!(nexts.contains(termino))) {
+
+                                                    nexts.add(termino);
+
+                                                }
 
                                             }
 
                                         }
-
                                     }
-
                                 }
+
                             }
+
                         }
 
-                    }
+                        index  = nuevaIncidenciaDesde (rule.getId(), index, opcion.getTerminos());
 
+                    }
                 }
 
             }
@@ -226,6 +263,28 @@ public class GLC {
             //System.out.println("Para la regla " + rule.getId() + " se tienen los siguientes: " + rule.printSegundos());
 
         }
+
+    }
+
+    private int nuevaIncidenciaDesde (String busqueda, int index, List<GLCTerm> terminos) {
+
+        int actual = 0;
+
+        for (GLCTerm termino: terminos) {
+
+            if (actual >= index){
+
+                if (busqueda == termino.getId()) {
+                    return actual;
+                }
+
+            }
+
+            actual++;
+
+        }
+
+        return -1;
 
     }
 
@@ -438,6 +497,8 @@ public class GLC {
 
                 auxterms.add((GLCTerm) this.terminales.get(termino));
 
+            } else {
+                System.out.println("Termino: " + termino + " no encontrado.");
             }
 
         }
@@ -530,7 +591,7 @@ public class GLC {
 
         // expresion -> operacion | constante | callmethod()
 
-        this.agregarRegla("G", Arrays.asList("Z"));
+        this.agregarRegla("G", Arrays.asList("k","Z","l"));
         this.agregarRegla("G", Arrays.asList("X"));
         //this.agregarRegla("G", Arrays.asList("H"));
 
