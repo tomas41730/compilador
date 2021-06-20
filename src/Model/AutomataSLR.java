@@ -40,6 +40,14 @@ public class AutomataSLR {
 
     }
 
+    public List<EstadoSLR> getEstados() {
+        return estados;
+    }
+
+    public void setEstados(List<EstadoSLR> estados) {
+        this.estados = estados;
+    }
+
     private void generarEstados(){
 
         List<EstadoSLR> pending  = new ArrayList<>(estados);

@@ -4,7 +4,6 @@ public class TransicionSLR {
 
     private int destino;
     private String input;
-    private String operacion;
 
     public TransicionSLR (int destino, String input) {
 
@@ -14,4 +13,19 @@ public class TransicionSLR {
 
     }
 
+    public int getDestino() {
+        return destino;
+    }
+
+    public void setDestino(int destino) {
+        this.destino = destino;
+    }
+
+    public String getInput() {
+        return input;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
 }

@@ -1,6 +1,8 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 public class SLR {
@@ -11,7 +13,11 @@ public class SLR {
 
     private AutomataSLR automata;
 
+    private Dictionary tablaSLR;
+
     public SLR () {
+        // ((HashTable) tablaslr.get(0)).get("E") = null error sintaxis
+
 
         this.glc = new GLC();
 
@@ -25,6 +31,91 @@ public class SLR {
         //
 
         this.automata = new AutomataSLR(this.reglaInicial, glc.getReglasGLCporNumero());
+
+        this.generarTabla();
+
+        this.printTablaSLR();
+
+    }
+
+    private void generarTabla() {
+
+        this.tablaSLR = new Hashtable();
+
+        for (EstadoSLR estado : this.automata.getEstados()) {
+
+            tablaSLR.put(estado.getId(), new Hashtable<>());
+
+            for (TransicionSLR transicion : estado.getTransiciones()) {
+
+                String operacion = "";
+
+                if (this.esTerminal(transicion.getInput())) {
+
+                    operacion = "shift";
+
+                } else {
+
+                    operacion = "move";
+
+                }
+
+                ((Hashtable) this.tablaSLR.get(estado.getId())).put(transicion.getInput(), new OperacionSRL(operacion, transicion.getDestino()));
+
+
+            }
+
+            for (ReglaSLR regla : estado.getReglas()) {
+
+                if (regla.getRegla().getOpciones().get(0).getTerminos().size() == regla.getIndex()) {
+
+                    if (regla.getNumeroRegla() == -1) {
+
+                        ((Hashtable) this.tablaSLR.get(estado.getId())).put("$", new OperacionSRL());
+
+                    } else {
+
+                        for (GLCTerm siguiente :  regla.getRegla().getSiguientes()) {
+
+                            ((Hashtable) this.tablaSLR.get(estado.getId())).put(siguiente.getId(), new OperacionSRL("reduce", regla.getNumeroRegla()));
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+    private void printTablaSLR() {
+
+        System.out.println("--------------------------------------Tabla SLR--------------------------------------");
+
+        ((Hashtable) this.tablaSLR).forEach((k,v) -> {
+            System.out.println("Para el estado " + k + " se tienen las operaciones:: ");
+
+            ((Hashtable) v).forEach((k1, v1) -> {
+
+                System.out.println("Con la input " + k1 + " " + v1);
+
+            });
+
+        });
+
+    }
+
+    private boolean esTerminal(String x) {
+
+        if (this.glc.getTerminales().get(x) != null) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
