@@ -78,11 +78,9 @@ public class ControllerGUI implements Initializable
         tbvDetalles.getItems().clear();
         List<String> lineas = ManejoArchivos.leerArchivo(path);
         AnalizadorLexico anaLex = new AnalizadorLexico();
-        List<Error> errores = anaLex.AnalizarCodigo(lineas);
-        //anaLex.imprimirLexemas();
-        errores.forEach(System.out::println);
+        anaLex.AnalizarCodigo(lineas);
+        anaLex.imprimirLexemas();
         anaLex.getListaLexemas().forEach(lexema -> tbvDetalles.getItems().add(lexema));
-
     }
 
     @FXML

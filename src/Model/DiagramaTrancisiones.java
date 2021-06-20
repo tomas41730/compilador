@@ -181,7 +181,7 @@ public class DiagramaTrancisiones
         this.tablaPalabrasReservadas.put("false", "false");
     }
 
-    public List<Lexema> analizarLexema(String lexema, int fila, int columna_ini, List<Error> errores) //cambiar void por tupla de ser posible, caso contrario cambiarlo a List<String, String>
+    public List<Lexema> analizarLexema(String lexema, int fila, int columna_ini) //cambiar void por tupla de ser posible, caso contrario cambiarlo a List<String, String>
     {
 
         this.estadoActual = (EstadoTransicion) this.estados.get(0);
@@ -252,7 +252,6 @@ public class DiagramaTrancisiones
                     // si no estamos en un estado final, es un error
                     //System.out.println("error: " + lex);
                     lexemas.add(new Lexema(lex, returnVal, (String) DictManager.tokenToSimbol().get(returnVal), fila, columna, true));
-                    errores.add(new Error("Lexico", fila, columna, lex));
                 }
                 columna++;
                 this.estadoActual = (EstadoTransicion) this.estados.get(0);
