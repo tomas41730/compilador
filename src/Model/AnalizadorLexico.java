@@ -20,7 +20,7 @@ public class AnalizadorLexico
         {
             if(lex.isError())
             {
-                errores.add(new Error("Lexico", lex.getFila(), lex.getColumna(), lex.getValor()));
+                errores.add(new Error("Lexico", lex.getFila(), lex.getColumna(), "Palabra invalida: " + lex.getValor()));
             }
         }
         return errores;
