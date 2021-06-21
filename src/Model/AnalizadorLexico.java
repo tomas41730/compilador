@@ -13,7 +13,18 @@ public class AnalizadorLexico
     public List<Lexema> getListaLexemas() {
         return listaLexemas;
     }
-
+    public List<Error> getListaErrores()
+    {
+        List<Error> errores = new ArrayList<Error>();
+        for (Lexema lex:listaLexemas)
+        {
+            if(lex.isError())
+            {
+                errores.add(new Error("Lexico", lex.getFila(), lex.getColumna(), lex.getValor()));
+            }
+        }
+        return errores;
+    }
     public AnalizadorLexico()
     {
         this.dt = new DiagramaTrancisiones();
