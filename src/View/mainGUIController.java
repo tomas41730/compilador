@@ -3,7 +3,7 @@ package View;
 import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
-import Model.Error;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,9 +53,8 @@ public class mainGUIController implements Initializable
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
         path = file.getPath();
         System.out.println(path);
-        ManejoArchivos.leerArchivo(path).forEach(linea -> codigo =  codigo + String.valueOf(i.getAndIncrement())+"\t"+linea + "\n");
+        ManejoArchivos.leerArchivo(path).forEach(linea -> codigo =  codigo + linea + "\n");
         TextArea txtAreaCodigo = new TextArea();
-        //txtAreaCodigo.setParagraphGraphicFactory(LineNumberFactory.get(txtAreaCodigo));
         txtAreaCodigo.setPrefSize(916.0, 681.0);
         txtAreaCodigo.setText(codigo);
         Tab fileTab = new Tab(file.getName());
@@ -129,20 +128,23 @@ public class mainGUIController implements Initializable
         TableColumn tcFila;
         TableColumn tcColumna;
         TableColumn tcDescripcion;
+        TableColumn tcMensajeError;
         tbvErrores.setEditable(true);
 
         tcTipo = new TableColumn("Tipo");
         tcFila = new TableColumn("Fila");
         tcColumna = new TableColumn("Columna");
         tcDescripcion = new TableColumn("Descripcion");
+        tcMensajeError = new TableColumn("MensajeError");
 
-        tbvErrores.getColumns().addAll(tcTipo, tcFila, tcColumna, tcDescripcion);
+        tbvErrores.getColumns().addAll(tcTipo, tcFila, tcColumna, tcDescripcion, tcMensajeError);
 
         tcTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         tcFila.setCellValueFactory(new PropertyValueFactory<>("fila"));
         tcColumna.setCellValueFactory(new PropertyValueFactory<>("columna"));
         tcDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+        tcMensajeError.setCellValueFactory(new PropertyValueFactory<>("mensajeError"));
 
-        tcDescripcion.setMinWidth(180);
+        tcDescripcion.setMinWidth(100);
     }
 }

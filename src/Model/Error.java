@@ -6,13 +6,15 @@ public class Error
     private int fila;
     private int columna;
     private String descripcion;
+    private String mensajeError;
 
-    public Error(String tipo, int fila, int columna, String descripcion)
+    public Error(String tipo, int fila, int columna, String descripcion, String mensajeError)
     {
         this.tipo = tipo;
         this.fila = fila;
         this.columna = columna;
         this.descripcion = descripcion;
+        this.mensajeError = mensajeError;
     }
 
     public String getTipo() {
@@ -47,6 +49,13 @@ public class Error
         this.descripcion = descripcion;
     }
 
+    public String getMensajeError() {
+        return mensajeError;
+    }
+
+    public void setMensajeError(String mensajeError) {
+        this.mensajeError = mensajeError;
+    }
     @Override
     public String toString() {
         return "Error{" +
