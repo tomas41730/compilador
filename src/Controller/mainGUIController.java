@@ -1,10 +1,7 @@
 package Controller;
 
-import Controller.ArbolGUIController;
-import Controller.FormsOperations;
-import Controller.ManejoArchivos;
-import Model.AnalizadorLexico;
-import Model.SLR;
+import Model.AnalizadorLexico.AnalizadorLexico;
+import Model.SLR.SLR;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +13,6 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;

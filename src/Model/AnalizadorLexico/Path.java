@@ -1,4 +1,4 @@
-package Model;
+package Model.AnalizadorLexico;
 
 public class Path {
     public EstadoTransicion siguienteEstado;

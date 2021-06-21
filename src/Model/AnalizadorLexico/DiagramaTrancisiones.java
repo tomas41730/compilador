@@ -1,11 +1,10 @@
-package Model;
+package Model.AnalizadorLexico;
 
 import Config.DictManager;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import Config.DictManager;
 
 public class DiagramaTrancisiones
 {

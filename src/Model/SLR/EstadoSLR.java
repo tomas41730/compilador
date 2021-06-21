@@ -1,4 +1,6 @@
-package Model;
+package Model.SLR;
+
+import Model.GLC.GLCRule;
 
 import java.util.ArrayList;
 import java.util.List;

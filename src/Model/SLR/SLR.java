@@ -1,6 +1,12 @@
-package Model;
+package Model.SLR;
 
 import Config.DictManager;
+import Model.Error;
+import Model.GLC.GLC;
+import Model.GLC.GLCRule;
+import Model.GLC.GLCTerm;
+import Model.GLC.GLCoption;
+import Model.AnalizadorLexico.Lexema;
 
 import java.util.ArrayList;
 import java.util.Dictionary;

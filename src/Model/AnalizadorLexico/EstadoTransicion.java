@@ -1,4 +1,4 @@
-package Model;
+package Model.AnalizadorLexico;
 import java.util.*;
 
 public class EstadoTransicion {

@@ -1,4 +1,4 @@
-package Model;
+package Model.GLC;
 
 public class GLCTerm {
 
