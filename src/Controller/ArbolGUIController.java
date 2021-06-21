@@ -1,4 +1,4 @@
-package View;
+package Controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-public class ControllerArbolGUI implements Initializable {
+public class ArbolGUIController implements Initializable {
 
     @FXML
     private AnchorPane arbolView;

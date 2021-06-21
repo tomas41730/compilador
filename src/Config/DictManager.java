@@ -10,6 +10,7 @@ public class DictManager {
 
     public static Dictionary tokenToTerminal = null;
     public static Dictionary terminalToToken = null;
+    public static Dictionary noTerminalToWord = null;
 
     public static Dictionary simbolToToken()
     {
@@ -96,6 +97,24 @@ public class DictManager {
         }
 
         return tokenToTerminal;
+    }
+
+    public static Dictionary noTerminalToDescription() {
+
+        if (noTerminalToWord == null) {
+
+            noTerminalToWord.put("X", "Constante (Entero, real, booleano, string)");
+            noTerminalToWord.put("A1", "Operacion Aritmetica");
+            noTerminalToWord.put("Z", "Operacion");
+            noTerminalToWord.put("E", "Operacion Logica");
+            noTerminalToWord.put("G", "Expresion (Operacion o Constante)");
+            noTerminalToWord.put("W", "Valor booleano");
+
+
+        }
+
+        return noTerminalToWord;
+
     }
 
 }

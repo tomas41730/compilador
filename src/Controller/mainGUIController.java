@@ -1,8 +1,10 @@
-package View;
+package Controller;
 
+import Controller.ArbolGUIController;
 import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
+import Model.SLR;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +32,10 @@ public class mainGUIController implements Initializable
     @FXML
     private TableView tbvErrores;
     TextArea txtAreaCodigo;
-    String path = "src/resources/ejemplo.txt";
+    String path = "SampleCode/code2.txt";
+    @FXML
+    private Label errorMessage;
+
     public String codigo = "";
 
     private FXMLLoader loader;
@@ -63,8 +68,7 @@ public class mainGUIController implements Initializable
     }
 
 
-    private void analex () {
-
+    private AnalizadorLexico analex () {
         // ex eval
         tbvDetalles.getItems().clear();
         tbvErrores.getItems().clear();
@@ -74,19 +78,48 @@ public class mainGUIController implements Initializable
         anaLex.imprimirLexemas();
         anaLex.getListaLexemas().forEach(lexema -> tbvDetalles.getItems().add(lexema));
         anaLex.getListaErrores().forEach(error ->  tbvErrores.getItems().add(error));
+
+        return anaLex;
+    }
+
+    private void anasin () {
+
+        AnalizadorLexico anaLex = this.analex();
+
+        if ( anaLex.getListaErrores().size() == 0 ) {
+
+            tbvErrores.getItems().clear();
+            SLR slr = new SLR();
+            slr.analizarCadena(anaLex.getListaLexemas());
+
+            if (!slr.isAcepted()) {
+                this.errorMessage.setText("Error Sintactico");
+            } else {
+
+                this.errorMessage.setText("Correcto!");
+
+            }
+            slr.getErroresSintacticos().forEach(error -> tbvErrores.getItems().add(error));
+
+        } else {
+
+            this.errorMessage.setText("Error Lexico");
+
+        }
+
     }
 
     @FXML
     public void btnEvaluar()
     {
-        analex();
+        anasin();
     }
     @FXML
     public void btnArbol()
     {
         FormsOperations formsOperations = new FormsOperations();
         FXMLLoader fXMLLoader = formsOperations.OpenForm("Arbol de derivacion", "/View/arbol.fxml");
-        ControllerArbolGUI arbolDerivacion = fXMLLoader.getController();
+        ArbolGUIController arbolDerivacion = fXMLLoader.getController();
     }
     public void crearTabFichero(File file)
     {
@@ -145,17 +178,14 @@ public class mainGUIController implements Initializable
         tcFila = new TableColumn("Fila");
         tcColumna = new TableColumn("Columna");
         tcDescripcion = new TableColumn("Descripcion");
-        tcMensajeError = new TableColumn("MensajeError");
 
-        tbvErrores.getColumns().addAll(tcTipo, tcFila, tcColumna, tcDescripcion, tcMensajeError);
+        tbvErrores.getColumns().addAll(tcTipo, tcFila, tcColumna, tcDescripcion);
 
         tcTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         tcFila.setCellValueFactory(new PropertyValueFactory<>("fila"));
         tcColumna.setCellValueFactory(new PropertyValueFactory<>("columna"));
         tcDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
-        tcMensajeError.setCellValueFactory(new PropertyValueFactory<>("mensajeError"));
-
-        tcDescripcion.setMinWidth(100);
+        tcDescripcion.setMinWidth(1000);
     }
     @FXML
     public void btnSave() throws IOException {

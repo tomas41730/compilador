@@ -77,4 +77,9 @@ public class Lexema
                 this.error;
                 
     }
+
+    @Override
+    public String toString() {
+        return this.simbolo;
+    }
 }
