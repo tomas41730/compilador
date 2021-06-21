@@ -12,7 +12,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +29,8 @@ public class mainGUIController implements Initializable
     private TableView tbvDetalles;
     @FXML
     private TableView tbvErrores;
-    String path = "";
+    TextArea txtAreaCodigo;
+    String path = "src/resources/ejemplo.txt";
     public String codigo = "";
 
     private FXMLLoader loader;
@@ -43,6 +46,8 @@ public class mainGUIController implements Initializable
     {
         inicializarTBVDetalles();
         inicializarTBVErrores();
+        System.out.println();
+        crearTabFichero(new File(path));
     }
     @FXML
     public void openFileWindow()
@@ -52,25 +57,17 @@ public class mainGUIController implements Initializable
         fileChooser.setTitle("Upload File Path");
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
         path = file.getPath();
-        System.out.println(path);
-        ManejoArchivos.leerArchivo(path).forEach(linea -> codigo =  codigo + linea + "\n");
-        TextArea txtAreaCodigo = new TextArea();
-        txtAreaCodigo.setPrefSize(916.0, 681.0);
-        txtAreaCodigo.setText(codigo);
-        Tab fileTab = new Tab(file.getName());
-        fileTab.setContent(txtAreaCodigo);
-        tabPane.getTabs().add(fileTab);
-        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        codigo = "";
-
+        crearTabFichero(file);
         this.analex();
 
     }
+
 
     private void analex () {
 
         // ex eval
         tbvDetalles.getItems().clear();
+        tbvErrores.getItems().clear();
         List<String> lineas = ManejoArchivos.leerArchivo(path);
         AnalizadorLexico anaLex = new AnalizadorLexico();
         anaLex.AnalizarCodigo(lineas);
@@ -90,6 +87,19 @@ public class mainGUIController implements Initializable
         FormsOperations formsOperations = new FormsOperations();
         FXMLLoader fXMLLoader = formsOperations.OpenForm("Arbol de derivacion", "/View/arbol.fxml");
         ControllerArbolGUI arbolDerivacion = fXMLLoader.getController();
+    }
+    public void crearTabFichero(File file)
+    {
+        ManejoArchivos.leerArchivo(file.getPath()).forEach(linea -> codigo =  codigo + linea + "\n");
+        txtAreaCodigo = new TextArea();
+        txtAreaCodigo.setPrefSize(916.0, 681.0);
+        txtAreaCodigo.setText(codigo);
+        Tab fileTab = new Tab(file.getName());
+        System.out.println(fileTab.getText());
+        fileTab.setContent(txtAreaCodigo);
+        tabPane.getTabs().add(fileTab);
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+        codigo = "";
     }
     public void inicializarTBVDetalles()
     {
@@ -146,5 +156,10 @@ public class mainGUIController implements Initializable
         tcMensajeError.setCellValueFactory(new PropertyValueFactory<>("mensajeError"));
 
         tcDescripcion.setMinWidth(100);
+    }
+    @FXML
+    public void btnSave() throws IOException {
+        ManejoArchivos.writeStringToFile(path,txtAreaCodigo.getText());
+        System.out.println(tabPane.getSelectionModel().getSelectedItem().getText());
     }
 }
