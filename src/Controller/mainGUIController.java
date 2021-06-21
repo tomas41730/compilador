@@ -1,9 +1,9 @@
-package View;
+package Controller;
 
+import Controller.ArbolGUIController;
 import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
-import Model.Error;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -90,7 +90,7 @@ public class mainGUIController implements Initializable
     {
         FormsOperations formsOperations = new FormsOperations();
         FXMLLoader fXMLLoader = formsOperations.OpenForm("Arbol de derivacion", "/View/arbol.fxml");
-        ControllerArbolGUI arbolDerivacion = fXMLLoader.getController();
+        ArbolGUIController arbolDerivacion = fXMLLoader.getController();
     }
     public void inicializarTBVDetalles()
     {
