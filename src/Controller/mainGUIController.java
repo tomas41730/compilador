@@ -4,6 +4,7 @@ import Controller.ArbolGUIController;
 import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
+import Model.SLR;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,7 +28,10 @@ public class mainGUIController implements Initializable
     private TableView tbvDetalles;
     @FXML
     private TableView tbvErrores;
-    String path = "";
+    @FXML
+    private Label errorMessage;
+
+    String path = "C:\\Users\\javi\\Desktop\\UPB\\Compilacion";
     public String codigo = "";
 
     private FXMLLoader loader;
@@ -64,26 +68,56 @@ public class mainGUIController implements Initializable
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         codigo = "";
 
-        this.analex();
+        this.anasin();
 
     }
 
-    private void analex () {
+    private AnalizadorLexico analex () {
 
         // ex eval
         tbvDetalles.getItems().clear();
+        tbvErrores.getItems().clear();
         List<String> lineas = ManejoArchivos.leerArchivo(path);
         AnalizadorLexico anaLex = new AnalizadorLexico();
         anaLex.AnalizarCodigo(lineas);
         anaLex.imprimirLexemas();
         anaLex.getListaLexemas().forEach(lexema -> tbvDetalles.getItems().add(lexema));
         anaLex.getListaErrores().forEach(error ->  tbvErrores.getItems().add(error));
+
+        return anaLex;
+    }
+
+    private void anasin () {
+
+        AnalizadorLexico anaLex = this.analex();
+
+        if ( anaLex.getListaErrores().size() == 0 ) {
+
+            tbvErrores.getItems().clear();
+            SLR slr = new SLR();
+            slr.analizarCadena(anaLex.getListaLexemas());
+
+            if (!slr.isAcepted()) {
+                this.errorMessage.setText("Error Sintactico");
+            } else {
+
+                this.errorMessage.setText("Correcto!");
+
+            }
+            slr.getErroresSintacticos().forEach(error -> tbvErrores.getItems().add(error));
+
+        } else {
+
+            this.errorMessage.setText("Error Lexico");
+
+        }
+
     }
 
     @FXML
     public void btnEvaluar()
     {
-        analex();
+        anasin();
     }
     @FXML
     public void btnArbol()
@@ -143,6 +177,6 @@ public class mainGUIController implements Initializable
         tcColumna.setCellValueFactory(new PropertyValueFactory<>("columna"));
         tcDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
-        tcDescripcion.setMinWidth(180);
+        tcDescripcion.setMinWidth(500);
     }
 }

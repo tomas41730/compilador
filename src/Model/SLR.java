@@ -21,9 +21,14 @@ public class SLR {
 
     private boolean acepted;
 
+    private List<Error> erroresSintacticos;
+
     public SLR () {
 
         this.analisis ="";
+
+        this.erroresSintacticos = new ArrayList<>();
+
         // ((HashTable) tablaslr.get(0)).get("E") = null error sintaxis
         this.glc = new GLC();
         // generando regla inicial con el id reservado INICIAL
@@ -39,15 +44,15 @@ public class SLR {
         this.acepted = true;
 
         List<Lexema> ejemplo = new ArrayList<>();
-        /*ejemplo.add( new Lexema("(", "(", "d", 0, 0, false));
+        /*//ejemplo.add( new Lexema("(", "(", "d", 0, 0, false));
         ejemplo.add( new Lexema("(", "(", "k", 0, 0, false));
         ejemplo.add( new Lexema("1", "int", "b", 0, 1, false));
         ejemplo.add( new Lexema("+", "Op. Aritmetico", "d", 0, 2, false));
         ejemplo.add( new Lexema("1", "int", "b", 0, 3, false));
         ejemplo.add( new Lexema(")", ")", "l", 0, 4, false));
         ejemplo.add( new Lexema("==", "Op. Logico", "e", 5, 1, false));
-        ejemplo.add( new Lexema("2", "int", "b", 0, 6, false));*/
-
+        ejemplo.add( new Lexema("2", "int", "b", 0, 6, false));
+        ///
         ejemplo.add( new Lexema("(", "(", "k", 0, 0, false));
         ejemplo.add( new Lexema("1", "int", "b", 0, 1, false));
         ejemplo.add( new Lexema("+", "Op. Aritmetico", "d", 0, 2, false));
@@ -58,6 +63,23 @@ public class SLR {
 
 
         this.analizarCadena(ejemplo);
+        */
+    }
+
+    public boolean isAcepted() {
+        return acepted;
+    }
+
+    public List<Error> getErroresSintacticos() {
+        return erroresSintacticos;
+    }
+
+    public void setErroresSintacticos(List<Error> erroresSintacticos) {
+        this.erroresSintacticos = erroresSintacticos;
+    }
+
+    public void setAcepted(boolean acepted) {
+        this.acepted = acepted;
     }
 
     private void generarTabla() {
@@ -121,7 +143,7 @@ public class SLR {
 
     }
 
-    private void analizarCadena(List<Lexema> cadenaDesignada){
+    public void analizarCadena(List<Lexema> cadenaDesignada){
 
         this.acepted = true;
 
@@ -217,6 +239,8 @@ public class SLR {
                             errorMessage = errorMessage.substring(0, errorMessage.length()-2);
                             errorMessage = errorMessage + " } can't continue with sintax analysis.";
 
+                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+
                             break;
 
                         }
@@ -248,6 +272,8 @@ public class SLR {
 
             } else {
 
+                System.out.println("Error en caracter: " + cadena.get(0).getValor() + " locacion: " + cadena.get(0).getFila() + "," + cadena.get(0).getColumna());
+
                 this.acepted = false;
 
                 //Error tipo 1 no hay operacion (s o r) para un terminal dado
@@ -255,7 +281,7 @@ public class SLR {
                 String fakeInput = "";
                 String errorMessage = "";
 
-                final String[] maybeMeant = {""};
+                final List<String> maybeMeant = new ArrayList<>();
 
                 int tipo = -1;
 
@@ -274,15 +300,15 @@ public class SLR {
 
                             //asumimos que el caracter sobra
 
-                            maybeMeant[0] = "accept";
+                            maybeMeant.add("accept");
 
-                        }else if (maybeMeant[0] == "" && (((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") )) {
+                        }else if ( (((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") )) {
 
                             int sigEstado = ((OperacionSRL)v).getEstadoFuturo();
 
                             if ( ((Hashtable) this.tablaSLR.get(sigEstado)).get("$") != null ) {
 
-                                maybeMeant[0] = (String) k;
+                                maybeMeant.add((String) k);
 
                             }
 
@@ -293,26 +319,49 @@ public class SLR {
                     if (cadena.get(0).getSimbolo() == "$") {
 
                         tipo = 1;
-                        errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant[0]) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
+
+                        String expectations = "{ ";
+
+                        for (String pos : maybeMeant) {
+                            expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
+                        }
+
+                        expectations = expectations.substring(0, expectations.length()-2);
+                        expectations = expectations + " }";
+
+                        errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
                         System.out.println(errorMessage);
 
-                        cadena.add(0, new Lexema(maybeMeant[0], (String) DictManager.simbolToToken().get(maybeMeant[0]), maybeMeant[0], -1, -1, true));
+                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
 
-                    } else if (maybeMeant[0] == "accept") {
+                        cadena.add(0, new Lexema(maybeMeant.get(0), (String) DictManager.simbolToToken().get(maybeMeant.get(0)), maybeMeant.get(0), -1, -1, true));
+
+                    } else if (maybeMeant.contains("accept")) {
                         //sobra
                         tipo = 0;
                         errorMessage = "Unexpected " + cadena.get(0).getValor() + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
                         System.out.println(errorMessage);
+                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
                         cadena.remove(0);
 
-                    } else if (!maybeMeant[0].equals("")) {
+                    } else if (maybeMeant.size() != 0) {
                         // caracter erroneo
                         tipo = 2;
-                        errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant[0]) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
-                        System.out.println(errorMessage);
-                        cadena.remove(0);
 
-                        cadena.get(0).setSimbolo(maybeMeant[0]);
+                        String expectations = "{ ";
+
+                        for (String pos : maybeMeant) {
+                            expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
+                        }
+
+                        expectations = expectations.substring(0, expectations.length()-2);
+                        expectations = expectations + " }";
+
+                        errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
+                        System.out.println(errorMessage);
+                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+
+                        cadena.get(0).setSimbolo(maybeMeant.get(0));
 
                     }
 
@@ -321,6 +370,7 @@ public class SLR {
 
                         errorMessage = "Error on character: " + cadena.get(0).getValor() + " at line: " + cadena.get(0).getFila()  + " and column: " + cadena.get(0).getColumna() + ", Unable to continue with sintax analysis." ;
                         System.out.println(errorMessage);
+                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
                         break;
                     }
 
@@ -336,6 +386,7 @@ public class SLR {
                         tipo = 0;
                         errorMessage = "Unexpected " + cadena.get(0).getValor() + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
                         System.out.println(errorMessage);
+                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
                         cadena.remove(0);
 
                     }
@@ -344,40 +395,48 @@ public class SLR {
 
                         ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).forEach((k,v) -> {
 
-                            if ( maybeMeant[0] == "") {
 
                                 if ( ((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") ){
 
-                                        maybeMeant[0] = (String) k;
+                                        maybeMeant.add((String) k);
 
                                 }
 
-                            }
 
                         });
 
-                        System.out.println("mb: " + maybeMeant[0]);
+                        if (maybeMeant.size() != 0) {
 
-                        if (!maybeMeant[0].equals("")) {
-
-                            int fakestate = ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(maybeMeant[0])).getEstadoFuturo();
+                            int fakestate = ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(maybeMeant.get(0))).getEstadoFuturo();
 
                             if ( ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol) != null ) {
 
                                 tipo = 1;
-                                errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant[0]) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
+                                String expectations = "{ ";
+
+                                for (String pos : maybeMeant) {
+                                    expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
+                                }
+
+                                expectations = expectations.substring(0, expectations.length()-2);
+                                expectations = expectations + " }";
+
+                                errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
                                 System.out.println(errorMessage);
 
-                                cadena.add(0, new Lexema(maybeMeant[0], (String) DictManager.simbolToToken().get(maybeMeant[0]), maybeMeant[0], -1, -1, true));
+                                this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+
+                                cadena.add(0, new Lexema(maybeMeant.get(0), (String) DictManager.simbolToToken().get(maybeMeant.get(0)), maybeMeant.get(0), -1, -1, true));
 
                             } else {
 
                                 tipo = 2;
-                                errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant[0]) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
+                                errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant.get(0)) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
                                 System.out.println(errorMessage);
-                                cadena.remove(0);
 
-                                cadena.get(0).setSimbolo(maybeMeant[0]);
+                                this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+
+                                cadena.get(0).setSimbolo(maybeMeant.get(0));
 
 
                             }
@@ -389,6 +448,7 @@ public class SLR {
 
                             errorMessage = "Error on character: " + cadena.get(0).getValor() + " at line: " + cadena.get(0).getFila()  + " and column: " + cadena.get(0).getColumna() + ", Unable to continue with sintax analysis." ;
                             System.out.println(errorMessage);
+                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
                             break;
                         }
 
@@ -410,6 +470,7 @@ public class SLR {
                             tipo = 0;
                             errorMessage = "Unexpected " + cadena.get(0).getValor() + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
                             System.out.println(errorMessage);
+                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
                             cadena.remove(0);
 
                         }
@@ -422,8 +483,6 @@ public class SLR {
 
                         ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).forEach((k,v) -> {
 
-                            if ( maybeMeant[0] == "") {
-
                                 if ( ((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") ){
 
 
@@ -431,18 +490,16 @@ public class SLR {
 
                                     if ( ( (Hashtable) this.tablaSLR.get(sigEstado) ).get(nextSimbol) != null ) {
 
-                                        maybeMeant[0] = (String) k;
+                                        maybeMeant.add((String) k);
 
                                     }
 
 
                                 }
 
-                            }
-
                         });
 
-                        if (!maybeMeant[0].equals("")) {
+                        if (maybeMeant.size() > 0) {
 
                             // verificamos 2 lexemas a futuro si agregando este caracter faltante no hay problemas
 
@@ -459,10 +516,21 @@ public class SLR {
                                 if (((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol) != null) {
 
                                     tipo = 1;
-                                    errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant[0]) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
+                                    String expectations = "{ ";
+
+                                    for (String pos : maybeMeant) {
+                                        expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
+                                    }
+
+                                    expectations = expectations.substring(0, expectations.length()-2);
+                                    expectations = expectations + " }";
+
+                                    errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
                                     System.out.println(errorMessage);
 
-                                    cadena.add(0, new Lexema(maybeMeant[0], (String) DictManager.simbolToToken().get(maybeMeant[0]), maybeMeant[0], -1, -1, true));
+                                    this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+
+                                    cadena.add(0, new Lexema(maybeMeant.get(0), (String) DictManager.simbolToToken().get(maybeMeant.get(0)), maybeMeant.get(0), -1, -1, true));
 
                                 }
 
@@ -486,11 +554,22 @@ public class SLR {
                                     if ( ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol2) != null ) {
 
                                         tipo = 2;
-                                        errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant[0]) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
-                                        System.out.println(errorMessage);
-                                        cadena.remove(0);
 
-                                        cadena.get(0).setSimbolo(maybeMeant[0]);
+                                        String expectations = "{ ";
+
+                                        for (String pos : maybeMeant) {
+                                            expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
+                                        }
+
+                                        expectations = expectations.substring(0, expectations.length()-2);
+                                        expectations = expectations + " }";
+
+                                        errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
+                                        System.out.println(errorMessage);
+
+                                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+
+                                        cadena.get(0).setSimbolo(maybeMeant.get(0));
 
                                     }
 
@@ -507,6 +586,7 @@ public class SLR {
 
                             errorMessage = "Error on character: " + cadena.get(0).getValor() + " at line: " + cadena.get(0).getFila()  + " and column: " + cadena.get(0).getColumna() + ", Unable to continue with sintax analysis." ;
                             System.out.println(errorMessage);
+                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
                             break;
                         }
 

@@ -608,6 +608,8 @@ public class GLC {
 
         this.agregarRegla("X", Arrays.asList("b"));
         this.agregarRegla("X", Arrays.asList("g"));
+        this.agregarRegla("X", Arrays.asList("c"));
+        //this.agregarRegla("X", Arrays.asList("a"));
         this.agregarRegla("X", Arrays.asList("W"));
         // this.agregarRegla("X", Arrays.asList("E1"));
 

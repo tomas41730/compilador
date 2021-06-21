@@ -23,7 +23,7 @@ public class Main extends Application {
     }
     public static void main(String[] args)
     {
-        SLR slr = new SLR();
+        //SLR slr = new SLR();
         launch(args);
     }
 }
