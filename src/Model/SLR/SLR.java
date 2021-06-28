@@ -26,6 +26,8 @@ public class SLR {
 
     private List<Error> erroresSintacticos;
 
+    private ArbolSintactico arbol;
+
     public SLR () {
 
         this.analisis ="";
@@ -188,6 +190,9 @@ public class SLR {
         cadenaAEvaluar.add(new Lexema("$","$","$", cadenaAEvaluar.get(cadenaAEvaluar.size()-1).getFila(), cadenaAEvaluar.get(cadenaAEvaluar.size()-1).getColumna()-1, false));
         List<Integer> estados = new ArrayList<>(Arrays.asList(0));
         List<Lexema> stack = new ArrayList<>();
+        List<ArbolSintactico> nodosStack = new ArrayList<>();
+
+        int idNodos = 0;
 
         List<Lexema> cadenaActual = new ArrayList<>(cadenaAEvaluar);
 
@@ -219,16 +224,33 @@ public class SLR {
                         cadenaActual.remove(0);
                         estados.add(operacion.getEstadoFuturo());
                         stack.add(lexemaActual);
+                        nodosStack.add(new ArbolSintactico(lexemaActual, idNodos));
+                        idNodos++;
+
                         break;
 
                     case "reduce":
                         GLCRule reglaDeReduccion = this.glc.getReglasGLCporNumero().get(operacion.getEstadoFuturo());
                         int nroABorrar = reglaDeReduccion.getOpciones().get(0).getTerminos().size();
 
+                        List<ArbolSintactico> hijos = new ArrayList<>();
+
+                        for (int i = 0; i < nroABorrar; i++) {
+
+                            hijos.add(nodosStack.get(nodosStack.size()-1-i));
+
+                        }
+
                         this.borrarN(estados, nroABorrar);
                         this.borrarN(stack, nroABorrar);
+                        this.borrarN(nodosStack, nroABorrar);
 
                         stack.add(new Lexema(reglaDeReduccion.getId(), reglaDeReduccion.getId(), reglaDeReduccion.getId(), -1, -1, false));
+
+                        nodosStack.add(new ArbolSintactico(stack.get(stack.size()-1), idNodos));
+                        idNodos++;
+
+                        nodosStack.get(nodosStack.size()-1).agregarHijos(hijos);
 
                         Hashtable nuevo_estado_dict = ((Hashtable) this.tablaSLR.get( estados.get(estados.size()-1) ));
                         OperacionSRL nuevaOperacion = (OperacionSRL) nuevo_estado_dict.get(stack.get(stack.size()-1).getSimbolo());
@@ -258,6 +280,11 @@ public class SLR {
                         System.out.println("Cadena: " + cadenaActual.toString() + ", estados: " + estados.toString() + ", Stack: " + stack.toString());
                         System.out.println("Finished, status: " + this.acepted);
                         checking = false;
+
+                        this.arbol = nodosStack.get(0);
+
+                        System.out.println("Arbol Sintactico: " + this.arbol.toString());
+
                         break;
 
                 }
