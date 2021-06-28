@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -102,7 +103,7 @@ public class mainGUIController implements Initializable
             this.errorMessage.setText("Error Lexico");
 
         }
-
+        autoResizeColumns(tbvErrores);
     }
 
     @FXML
@@ -167,7 +168,6 @@ public class mainGUIController implements Initializable
         TableColumn tcFila;
         TableColumn tcColumna;
         TableColumn tcDescripcion;
-        TableColumn tcMensajeError;
         tbvErrores.setEditable(true);
 
         tcTipo = new TableColumn("Tipo");
@@ -181,11 +181,38 @@ public class mainGUIController implements Initializable
         tcFila.setCellValueFactory(new PropertyValueFactory<>("fila"));
         tcColumna.setCellValueFactory(new PropertyValueFactory<>("columna"));
         tcDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
-        tcDescripcion.setMinWidth(1000);
+        //tcDescripcion.setMinWidth(1000);
     }
     @FXML
     public void btnSave() throws IOException {
         ManejoArchivos.writeStringToFile(path,txtAreaCodigo.getText());
         System.out.println(tabPane.getSelectionModel().getSelectedItem().getText());
+    }
+    public static void autoResizeColumns(TableView<?> table)
+    {
+        //Set the right policy
+        table.setColumnResizePolicy( TableView.UNCONSTRAINED_RESIZE_POLICY);
+        table.getColumns().stream().forEach( (column) ->
+        {
+            //Minimal width = columnheader
+            Text t = new Text( column.getText() );
+            double max = t.getLayoutBounds().getWidth();
+            for ( int i = 0; i < table.getItems().size(); i++ )
+            {
+                //cell must not be empty
+                if ( column.getCellData( i ) != null )
+                {
+                    t = new Text( column.getCellData( i ).toString() );
+                    double calcwidth = t.getLayoutBounds().getWidth();
+                    //remember new max-width
+                    if ( calcwidth > max )
+                    {
+                        max = calcwidth;
+                    }
+                }
+            }
+            //set the new max-widht with some extra space
+            column.setPrefWidth( max + 10.0d );
+        } );
     }
 }
