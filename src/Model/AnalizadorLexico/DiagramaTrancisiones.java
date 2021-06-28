@@ -178,6 +178,7 @@ public class DiagramaTrancisiones
         this.tablaPalabrasReservadas.put("return", "return");
         this.tablaPalabrasReservadas.put("true", "true");
         this.tablaPalabrasReservadas.put("false", "false");
+        this.tablaPalabrasReservadas.put("end", "end");
     }
 
     public List<Lexema> analizarLexema(String lexema, int fila, int columna_ini) //cambiar void por tupla de ser posible, caso contrario cambiarlo a List<String, String>

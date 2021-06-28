@@ -86,7 +86,7 @@ public class mainGUIController implements Initializable
 
             tbvErrores.getItems().clear();
             SLR slr = new SLR();
-            slr.analizarCadena(anaLex.getListaLexemas());
+            slr.evaluarCadena(anaLex.getListaLexemas());
 
             if (!slr.isAcepted()) {
                 this.errorMessage.setText("Error Sintactico");

@@ -49,6 +49,7 @@ public class DictManager {
             terminalToToken.put("b1","false");
             terminalToToken.put("eps","eps");
             terminalToToken.put("c1","error");
+            terminalToToken.put("d1","end");
 
         }
 
@@ -93,6 +94,7 @@ public class DictManager {
             tokenToTerminal.put("false", "b1");
             tokenToTerminal.put("eps", "eps");
             tokenToTerminal.put("error", "c1");
+            tokenToTerminal.put("end", "d1");
 
         }
 
@@ -102,6 +104,7 @@ public class DictManager {
     public static Dictionary noTerminalToDescription() {
 
         if (noTerminalToWord == null) {
+            noTerminalToWord = new Hashtable();
 
             noTerminalToWord.put("X", "Constante (Entero, real, booleano, string)");
             noTerminalToWord.put("A1", "Operacion Aritmetica");
