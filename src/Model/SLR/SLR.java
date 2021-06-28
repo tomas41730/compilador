@@ -8,10 +8,7 @@ import Model.GLC.GLCTerm;
 import Model.GLC.GLCoption;
 import Model.AnalizadorLexico.Lexema;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 public class SLR {
 
@@ -149,459 +146,390 @@ public class SLR {
 
     }
 
-    public void analizarCadena(List<Lexema> cadenaDesignada){
+    private List<String> obtenerPosibilidades(Hashtable tabla) {
 
-        this.acepted = true;
+        List<String> list = new ArrayList<>();
 
-        System.out.println();
-        List<Integer> estados = new ArrayList<>();
-        List<Lexema> lexemas = new ArrayList<>();
-        estados.add(0);
+        tabla.forEach((k,v) -> {
 
-        String cadenaSimbolos = "";
-        for (Lexema auxLex: cadenaDesignada) {
-            cadenaSimbolos = cadenaSimbolos + auxLex.getSimbolo();
-        }
-        analisis = cadenaSimbolos+"      |   0";
-        System.out.println(analisis);
+            list.add((String) k);
 
+        });
 
-        List<Lexema> cadena = new ArrayList<>(cadenaDesignada);
-        boolean t = true;
-        while (t) {
+        return list;
 
-            if (cadena.size() == 0 ) {
+    }
 
-                cadena.add(new Lexema("$", "$", "$", cadenaDesignada.get(cadenaDesignada.size()-1).getFila(), cadenaDesignada.get(cadenaDesignada.size()-1).getColumna()+1, false));
+    private List<String> transformar(List<String> lista) {
+
+        for (String word : lista) {
+
+            String aux;
+
+            aux = (String) DictManager.simbolToToken().get(word);
+            if (aux == null) {
+
+                aux = (String) DictManager.noTerminalToDescription().get(word);
 
             }
 
-            Lexema lex = cadena.get(0);
-            String token = lex.getSimbolo();
+            lista.set( lista.indexOf(word), aux );
 
+        }
 
-            if (((Hashtable)tablaSLR.get(estados.get(estados.size()-1))).get(lex.getSimbolo()) != null) {
+        return lista;
 
-                OperacionSRL v1 = (OperacionSRL) ((Hashtable)tablaSLR.get(estados.get(estados.size()-1))).get(lex.getSimbolo());
-                int k = v1.getEstadoFuturo();
+    }
 
-                switch (v1.getTipo()) {
+    public void evaluarCadena(List<Lexema> cadenaAEvaluar) {
+
+        this.acepted = true;
+
+        cadenaAEvaluar.add(new Lexema("$","$","$", cadenaAEvaluar.get(cadenaAEvaluar.size()-1).getFila(), cadenaAEvaluar.get(cadenaAEvaluar.size()-1).getColumna()-1, false));
+        List<Integer> estados = new ArrayList<>(Arrays.asList(0));
+        List<Lexema> stack = new ArrayList<>();
+
+        List<Lexema> cadenaActual = new ArrayList<>(cadenaAEvaluar);
+
+        boolean checking = true;
+
+        System.out.println("Empezando Evaluacion: ");
+
+        while (checking) {
+
+            System.out.println("Cadena: " + cadenaActual.toString() + ", estados: " + estados.toString() + ", Stack: " + stack.toString());
+
+            Lexema lexemaActual = cadenaActual.get(0);
+
+            int estado_actual = estados.get(estados.size() - 1 );
+
+            Hashtable diccionario_estado_actual = ((Hashtable) this.tablaSLR.get(estado_actual));
+
+            OperacionSRL operacion = (OperacionSRL) diccionario_estado_actual.get(lexemaActual.getSimbolo());
+
+            if ( operacion != null){
+
+                switch (operacion.getTipo()) {
+
                     case "move":
-                        estados.add((int) k);
-                        analisis = analisis + token + estados.get(estados.size()-1);
+                        estados.add(operacion.getEstadoFuturo());
                         break;
 
                     case "shift":
-                        cadena.remove(0);
-                        estados.add((int) k);
-                        lexemas.add(lex);
-                        analisis = analisis.substring(1) + token + estados.get(estados.size()-1);
-                        analisis = analisis.substring(0, cadena.size() + 10) + " { " + estados.toString() + " , " + lexemas.toString() + " }";
-                        System.out.println(analisis);
+                        cadenaActual.remove(0);
+                        estados.add(operacion.getEstadoFuturo());
+                        stack.add(lexemaActual);
                         break;
 
                     case "reduce":
-                        GLCRule reglaDeReduccion = this.glc.getReglasGLCporNumero().get(k);
-                        int numeroTerminosABorrar = reglaDeReduccion.getOpciones().get(0).getTerminos().size();
+                        GLCRule reglaDeReduccion = this.glc.getReglasGLCporNumero().get(operacion.getEstadoFuturo());
+                        int nroABorrar = reglaDeReduccion.getOpciones().get(0).getTerminos().size();
 
-                        this.borrarN(estados, numeroTerminosABorrar);
-                        this.borrarN(lexemas, numeroTerminosABorrar);
+                        this.borrarN(estados, nroABorrar);
+                        this.borrarN(stack, nroABorrar);
 
-                        lexemas.add(new Lexema(reglaDeReduccion.getId(), reglaDeReduccion.getId(), reglaDeReduccion.getId(), -1,-1, false));
+                        stack.add(new Lexema(reglaDeReduccion.getId(), reglaDeReduccion.getId(), reglaDeReduccion.getId(), -1, -1, false));
 
-                        if (((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(lexemas.get(lexemas.size()-1).getSimbolo())) != null) {
-                            int nuevoEstado = (int) ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(lexemas.get(lexemas.size()-1).getSimbolo())).getEstadoFuturo();
+                        Hashtable nuevo_estado_dict = ((Hashtable) this.tablaSLR.get( estados.get(estados.size()-1) ));
+                        OperacionSRL nuevaOperacion = (OperacionSRL) nuevo_estado_dict.get(stack.get(stack.size()-1).getSimbolo());
 
-                            estados.add(nuevoEstado);
+                        if ( nuevaOperacion != null) {
 
-                            analisis = analisis.substring(0, cadena.size() + 10) + " { " + estados.toString() + " , " + lexemas.toString() + " }";
-                            System.out.println(analisis);
+                            estados.add(nuevaOperacion.getEstadoFuturo());
 
                         } else {
 
-                            //error de tipo 2, no hay move operacion luego de un reduce
+                            this.acepted = false;
 
+                            List<String> posibilidades = this.obtenerPosibilidades(nuevo_estado_dict);
 
-                            List<String> expected = new ArrayList<>();
+                            posibilidades = this.transformar(posibilidades);
 
-                            String errorMessage = "Error: Expecting {";
-
-                            ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).forEach((key,value) -> {
-
-                                if ( ((OperacionSRL) value).getTipo().equals("move") ) {
-
-                                    expected.add((String) key);
-
-                                }
-
-                            });
-
-                            for(String substring : expected) {
-
-                                errorMessage = errorMessage + (String) DictManager.noTerminalToWord.get(substring) + ", ";
-
-                            }
-
-                            errorMessage = errorMessage.substring(0, errorMessage.length()-2);
-                            errorMessage = errorMessage + " } can't continue with sintax analysis.";
-
-                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-
+                            String errorMessage = "Expected: " + posibilidades.toString() + ", but received: " + lexemaActual.getValor() + " at line " + lexemaActual.getFila() + " and column " + lexemaActual.getColumna() + ".";
+                            this.erroresSintacticos.add(new Error("Sintactico", lexemaActual.getFila(), lexemaActual.getColumna(), errorMessage));
+                            checking = false;
                             break;
-
                         }
 
                         break;
 
                     case "accept":
-                        estados.add((int) k);
-                        System.out.println("Analisis sintactico finalizado con exito.");
 
-                        if (this.acepted) {
-
-                            System.out.println("Cadena Aceptada!");
-
-                        } else {
-
-                            System.out.println("Cadena Rechazada");
-
-                        }
-
-                        t = false;
+                        System.out.println("Cadena: " + cadenaActual.toString() + ", estados: " + estados.toString() + ", Stack: " + stack.toString());
+                        System.out.println("Finished, status: " + this.acepted);
+                        checking = false;
                         break;
 
-                    default:
-
-                        break;
                 }
-
 
             } else {
 
-                System.out.println("Error en caracter: " + cadena.get(0).getValor() + " locacion: " + cadena.get(0).getFila() + "," + cadena.get(0).getColumna());
-
                 this.acepted = false;
 
-                //Error tipo 1 no hay operacion (s o r) para un terminal dado
+                System.out.println("El estado: " + estado_actual + " no tiene una transicion con el simbolo " + lexemaActual.getValor());
 
-                String fakeInput = "";
-                String errorMessage = "";
+                int cadena_size = cadenaActual.size();
 
-                final List<String> maybeMeant = new ArrayList<>();
+                boolean fixed = false;
 
-                int tipo = -1;
+                // Primera verificacion:
+                if (!fixed) {
 
-                // tipo 0 : sobra caracter
-                // tipo 1: falta caracter
-                // tipo 2: caracter erroneo
-                // tipo -1 : erro no identificado, no se puede continuar
+                    System.out.println("Verificando si el caracter actual esta demas.");
+                    // Verificando si el caracter actual sobra
 
-                if (cadena.size() == 1) {
+                    if (cadena_size > 1) {
 
-                    // cadena de 1 caracter pendiente
+                        Lexema next = cadenaActual.get(1);
 
-                    ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).forEach((k,v) -> {
+                        OperacionSRL op_aux = (OperacionSRL) diccionario_estado_actual.get(next.getSimbolo());
 
-                        if( ((OperacionSRL) v).getTipo().equals("accept") ) {
+                        if (op_aux != null) {
 
-                            //asumimos que el caracter sobra
+                            if (cadena_size == 2) {
 
-                            maybeMeant.add("accept");
-
-                        }else if ( (((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") )) {
-
-                            int sigEstado = ((OperacionSRL)v).getEstadoFuturo();
-
-                            if ( ((Hashtable) this.tablaSLR.get(sigEstado)).get("$") != null ) {
-
-                                maybeMeant.add((String) k);
-
-                            }
-
-                        }
-
-                    });
-
-                    if (cadena.get(0).getSimbolo() == "$") {
-
-                        tipo = 1;
-
-                        String expectations = "{ ";
-
-                        for (String pos : maybeMeant) {
-                            expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
-                        }
-
-                        expectations = expectations.substring(0, expectations.length()-2);
-                        expectations = expectations + " }";
-
-                        errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
-                        System.out.println(errorMessage);
-
-                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-
-                        cadena.add(0, new Lexema(maybeMeant.get(0), (String) DictManager.simbolToToken().get(maybeMeant.get(0)), maybeMeant.get(0), -1, -1, true));
-
-                    } else if (maybeMeant.contains("accept")) {
-                        //sobra
-                        tipo = 0;
-                        errorMessage = "Unexpected " + cadena.get(0).getValor() + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
-                        System.out.println(errorMessage);
-                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-                        cadena.remove(0);
-
-                    } else if (maybeMeant.size() != 0) {
-                        // caracter erroneo
-                        tipo = 2;
-
-                        String expectations = "{ ";
-
-                        for (String pos : maybeMeant) {
-                            expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
-                        }
-
-                        expectations = expectations.substring(0, expectations.length()-2);
-                        expectations = expectations + " }";
-
-                        errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
-                        System.out.println(errorMessage);
-                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-
-                        cadena.get(0).setSimbolo(maybeMeant.get(0));
-
-                    }
-
-                    // No se pued eidentificar el error
-                    if (tipo == -1) {
-
-                        errorMessage = "Error on character: " + cadena.get(0).getValor() + " at line: " + cadena.get(0).getFila()  + " and column: " + cadena.get(0).getColumna() + ", Unable to continue with sintax analysis." ;
-                        System.out.println(errorMessage);
-                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-                        break;
-                    }
-
-
-                } else if (cadena.size() == 2)
-                {
-
-                    // Cadena de 2 caracteres
-                    String nextSimbol = cadena.get(1).getSimbolo();
-
-                    if( ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(nextSimbol) != null ){
-
-                        tipo = 0;
-                        errorMessage = "Unexpected " + cadena.get(0).getValor() + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
-                        System.out.println(errorMessage);
-                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-                        cadena.remove(0);
-
-                    }
-
-                    if (tipo == -1) {
-
-                        ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).forEach((k,v) -> {
-
-
-                                if ( ((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") ){
-
-                                        maybeMeant.add((String) k);
-
-                                }
-
-
-                        });
-
-                        if (maybeMeant.size() != 0) {
-
-                            int fakestate = ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(maybeMeant.get(0))).getEstadoFuturo();
-
-                            if ( ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol) != null ) {
-
-                                tipo = 1;
-                                String expectations = "{ ";
-
-                                for (String pos : maybeMeant) {
-                                    expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
-                                }
-
-                                expectations = expectations.substring(0, expectations.length()-2);
-                                expectations = expectations + " }";
-
-                                errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
+                                fixed = true;
+                                String errorMessage = "Unexpected " + lexemaActual.getValor() + " character at line " + lexemaActual.getFila() + " and column: " + lexemaActual.getColumna() + ".";
                                 System.out.println(errorMessage);
-
-                                this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-
-                                cadena.add(0, new Lexema(maybeMeant.get(0), (String) DictManager.simbolToToken().get(maybeMeant.get(0)), maybeMeant.get(0), -1, -1, true));
+                                this.erroresSintacticos.add(new Error("Sintactico", lexemaActual.getFila(), lexemaActual.getColumna(), errorMessage));
+                                cadenaActual.remove(0);
 
                             } else {
 
-                                tipo = 2;
-                                errorMessage = "Expected " + DictManager.simbolToToken().get(maybeMeant.get(0)) + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
-                                System.out.println(errorMessage);
+                                int estado_f = op_aux.getEstadoFuturo();
 
-                                this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
+                                if (op_aux.getTipo() == "shift") {
 
-                                cadena.get(0).setSimbolo(maybeMeant.get(0));
+                                    next = cadenaActual.get(2);
 
+                                } else {
 
-                            }
+                                    next = cadenaActual.get(1);
 
-                        }
+                                    if (op_aux.getTipo() == "reduce") {
 
-                        // No se pued eidentificar el error
-                        if (tipo == -1) {
+                                        GLCRule reglaDeReduccion = this.glc.getReglasGLCporNumero().get(op_aux.getEstadoFuturo());
+                                        int nroABorrar = reglaDeReduccion.getOpciones().get(0).getTerminos().size();
 
-                            errorMessage = "Error on character: " + cadena.get(0).getValor() + " at line: " + cadena.get(0).getFila()  + " and column: " + cadena.get(0).getColumna() + ", Unable to continue with sintax analysis." ;
-                            System.out.println(errorMessage);
-                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-                            break;
-                        }
+                                        int newEnd = estados.size()- 1 - nroABorrar;
 
-                    }
+                                        int preEstado = estados.get(newEnd);
 
-                } else {
-
-                    // cadena de 3 caracteres o mas
-
-                    String nextSimbol2 = cadena.get(2).getSimbolo();
-                    String nextSimbol = cadena.get(1).getSimbolo();
-
-                    if( ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(nextSimbol) != null ) {
-
-                        int fakestate = ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(nextSimbol)).getEstadoFuturo();
-
-                        if( ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol2) != null ) {
-
-                            tipo = 0;
-                            errorMessage = "Unexpected " + cadena.get(0).getValor() + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
-                            System.out.println(errorMessage);
-                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-                            cadena.remove(0);
-
-                        }
-
-                    }
-
-                    if (tipo == -1) {
-
-                        // revisamos con cual input se podria analizar el siguiente lexema
-
-                        ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).forEach((k,v) -> {
-
-                                if ( ((OperacionSRL) v).getTipo().equals("shift") || ((OperacionSRL) v).getTipo().equals("reduce") ){
-
-
-                                    int sigEstado = ((OperacionSRL)v).getEstadoFuturo();
-
-                                    if ( ( (Hashtable) this.tablaSLR.get(sigEstado) ).get(nextSimbol) != null ) {
-
-                                        maybeMeant.add((String) k);
+                                        estado_f = ( ((OperacionSRL)((Hashtable) this.tablaSLR.get(preEstado)).get(reglaDeReduccion.getId())).getEstadoFuturo() );
 
                                     }
-
 
                                 }
 
-                        });
+                                Hashtable new_dict = (Hashtable) this.tablaSLR.get(estado_f);
 
-                        if (maybeMeant.size() > 0) {
+                                if (new_dict.get(next.getSimbolo()) != null) {
 
-                            // verificamos 2 lexemas a futuro si agregando este caracter faltante no hay problemas
-
-                            //avanzamos del estado actual con maybe meant
-                            int fakestate = ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(maybeMeant)).getEstadoFuturo();
-
-                            // verificamos si el caracter actual funciona en el fake state
-                            if ( ((Hashtable) this.tablaSLR.get(fakestate)).get(cadena.get(0).getSimbolo()) != null ) {
-
-                                // avanzamos el fake state
-                                fakestate = ( (OperacionSRL) ((Hashtable) this.tablaSLR.get(fakestate)).get(cadena.get(0).getSimbolo()) ).getEstadoFuturo();
-
-                                // verificamos si el siguiente caracter funcionaria en el nuevo fake state
-                                if (((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol) != null) {
-
-                                    tipo = 1;
-                                    String expectations = "{ ";
-
-                                    for (String pos : maybeMeant) {
-                                        expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
-                                    }
-
-                                    expectations = expectations.substring(0, expectations.length()-2);
-                                    expectations = expectations + " }";
-
-                                    errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ".";
+                                    fixed = true;
+                                    String errorMessage = "Unexpected " + lexemaActual.getValor() + " character at line " + lexemaActual.getFila() + " and column: " + lexemaActual.getColumna() + ".";
                                     System.out.println(errorMessage);
-
-                                    this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-
-                                    cadena.add(0, new Lexema(maybeMeant.get(0), (String) DictManager.simbolToToken().get(maybeMeant.get(0)), maybeMeant.get(0), -1, -1, true));
+                                    this.erroresSintacticos.add(new Error("Sintactico", lexemaActual.getFila(), lexemaActual.getColumna(), errorMessage));
+                                    cadenaActual.remove(0);
 
                                 }
 
                             }
 
-                            // verificamos 2 lexemas a futuro si el caracter actual es erroneo y deberia ser reemplazado por maybe meant
-
-                            if (tipo == -1) {
-
-                                //avanzamos del estado actual con maybe meant
-                                fakestate = ((OperacionSRL) ((Hashtable) this.tablaSLR.get(estados.get(estados.size()-1))).get(maybeMeant)).getEstadoFuturo();
-
-                                // veirficamos si el siguiente caracter funcionaria con el fakestate
-                                if ( ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol) != null ) {
-
-                                    // avanzamos el fake state
-                                    fakestate = ( (OperacionSRL) ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol) ).getEstadoFuturo();
-
-                                    // verificamos si 2 caracteres a futuro si el analisis siguen siendo posible el analisis
-
-                                    if ( ((Hashtable) this.tablaSLR.get(fakestate)).get(nextSimbol2) != null ) {
-
-                                        tipo = 2;
-
-                                        String expectations = "{ ";
-
-                                        for (String pos : maybeMeant) {
-                                            expectations = expectations + DictManager.simbolToToken().get(pos) + ", ";
-                                        }
-
-                                        expectations = expectations.substring(0, expectations.length()-2);
-                                        expectations = expectations + " }";
-
-                                        errorMessage = "Expected " + expectations + " character at line " + cadena.get(0).getFila() + " and column: " + cadena.get(0).getColumna() + ", but received " + cadena.get(0) + ".";
-                                        System.out.println(errorMessage);
-
-                                        this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-
-                                        cadena.get(0).setSimbolo(maybeMeant.get(0));
-
-                                    }
-
-
-                                }
-
-                            }
-
-                        }
-
-
-                        // No se pued eidentificar el error
-                        if (tipo == -1) {
-
-                            errorMessage = "Error on character: " + cadena.get(0).getValor() + " at line: " + cadena.get(0).getFila()  + " and column: " + cadena.get(0).getColumna() + ", Unable to continue with sintax analysis." ;
-                            System.out.println(errorMessage);
-                            this.erroresSintacticos.add(new Error("Sintactico", cadena.get(0).getFila(), cadena.get(0).getColumna(), errorMessage));
-                            break;
                         }
 
                     }
+
+                }
+
+
+                // Segunda verificacion
+
+                if (!fixed) {
+
+                    // falta un caracter
+
+                    System.out.println("Verificando si falta un caracter.");
+
+                    List<String> posibilidades = this.obtenerPosibilidades(diccionario_estado_actual);
+                    List<Integer> estados_futuros = new ArrayList<>();
+                    List<String> tipo_Ops = new ArrayList<>();
+
+                    for (String pos: posibilidades) {
+
+                        estados_futuros.add(((OperacionSRL) diccionario_estado_actual.get(pos)).getEstadoFuturo());
+                        tipo_Ops.add(((OperacionSRL) diccionario_estado_actual.get(pos)).getTipo());
+                    }
+
+                    System.out.println("0:" + posibilidades.toString());
+
+                    for (int i = 0; i < posibilidades.size(); i++) {
+
+                        String aRevisar;
+
+                        if (tipo_Ops.get(i) == "shift") {
+
+                            aRevisar = lexemaActual.getSimbolo();
+
+                        } else {
+
+                            aRevisar = posibilidades.get(i);
+
+                            if (tipo_Ops.get(i) == "reduce") {
+
+                                GLCRule reglaDeReduccion = this.glc.getReglasGLCporNumero().get(estados_futuros.get(i));
+                                int nroABorrar = reglaDeReduccion.getOpciones().get(0).getTerminos().size();
+
+                                int newEnd = estados.size()- 1 - nroABorrar;
+
+                                int preEstado = estados.get(newEnd);
+
+                                estados.set(i, ( ((OperacionSRL)((Hashtable) this.tablaSLR.get(preEstado)).get(reglaDeReduccion.getId())).getEstadoFuturo() ));
+
+                            }
+
+                        }
+
+
+
+                        Hashtable dic_aux = (Hashtable) this.tablaSLR.get(estados_futuros.get(i));
+
+                        OperacionSRL op_aux = (OperacionSRL) dic_aux.get(aRevisar);
+
+                        if (op_aux == null) {
+
+                            posibilidades.remove(i);
+                            estados_futuros.remove(i);
+                            tipo_Ops.remove(i);
+                            i--;
+
+                        }
+
+                    }
+
+                    System.out.println("1:" + posibilidades.toString());
+
+                    if (posibilidades.size() > 0) {
+
+                            fixed = true;
+
+                            cadenaActual.add(0, new Lexema(posibilidades.get(0), (String) DictManager.simbolToToken().get(posibilidades.get(0)), posibilidades.get(0), -1, -1, true));
+
+                            posibilidades = this.transformar(posibilidades);
+
+                            String errorMessage = "Expected '" + posibilidades.toString() + "'  at line " + lexemaActual.getFila() + " and column: " + lexemaActual.getColumna() + ".";
+                            System.out.println(errorMessage);
+
+                            this.erroresSintacticos.add(new Error("Sintactico", lexemaActual.getFila(), lexemaActual.getColumna(), errorMessage));
+
+
+                    }
+
+                }
+
+
+                // tercera
+
+                if (!fixed) {
+
+                    // caracter equivocado
+
+                    System.out.println("Verificando si el caracter es incorrecto");
+
+                    if (cadena_size > 1) {
+
+                        String next = cadenaActual.get(1).getSimbolo();
+
+                        List<String> posibilidades = this.obtenerPosibilidades(diccionario_estado_actual);
+                        List<Integer> estados_futuros = new ArrayList<>();
+                        List<String> tipo_Ops = new ArrayList<>();
+
+                        for (String pos: posibilidades) {
+
+                            estados_futuros.add(((OperacionSRL) diccionario_estado_actual.get(pos)).getEstadoFuturo());
+                            tipo_Ops.add(((OperacionSRL) diccionario_estado_actual.get(pos)).getTipo());
+
+                        }
+
+                        for (int i = 0; i < posibilidades.size(); i++) {
+
+                            Hashtable dic_aux = (Hashtable) this.tablaSLR.get(estados_futuros.get(i));
+
+                            String aRevisar;
+
+                            if (tipo_Ops.get(i) == "shift") {
+
+                                aRevisar = next;
+
+                            } else {
+
+                                aRevisar = posibilidades.get(i);
+
+                                if (tipo_Ops.get(i) == "reduce") {
+
+                                    GLCRule reglaDeReduccion = this.glc.getReglasGLCporNumero().get(estados_futuros.get(i));
+                                    int nroABorrar = reglaDeReduccion.getOpciones().get(0).getTerminos().size();
+
+                                    int newEnd = estados.size()- 1 - nroABorrar;
+
+                                    int preEstado = estados.get(newEnd);
+
+                                    estados.set(i, ( ((OperacionSRL)((Hashtable) this.tablaSLR.get(preEstado)).get(reglaDeReduccion.getId())).getEstadoFuturo() ));
+
+                                }
+
+                            }
+
+                            OperacionSRL op_aux = (OperacionSRL) dic_aux.get(aRevisar);
+
+                            if (op_aux== null) {
+
+                                posibilidades.remove(i);
+                                estados_futuros.remove(i);
+                                tipo_Ops.remove(i);
+                            }
+
+                        }
+
+                        if (posibilidades.size() > 0) {
+
+                            fixed = true;
+
+                            cadenaActual.get(0).setSimbolo(posibilidades.get(0));
+
+                            posibilidades = this.transformar(posibilidades);
+
+                            String errorMessage = "Expected '" + posibilidades.toString() + "'  at line " + lexemaActual.getFila() + " and column: " + lexemaActual.getColumna() + " but received " + lexemaActual.getValor() + ".";
+                            System.out.println(errorMessage);
+
+                            this.erroresSintacticos.add(new Error("Sintactico", lexemaActual.getFila(), lexemaActual.getColumna(), errorMessage));
+
+
+                        }
+
+                    }
+
+
+                }
+
+
+                // no se puede identificar
+
+                if (!fixed) {
+
+                    String errorMessage = "No se pudo identificar el error en la fila: " + lexemaActual.getFila() + " y columna: " + lexemaActual.getColumna() + ", lexema: " + lexemaActual.getValor();
+                    System.out.println(errorMessage);
+                    this.erroresSintacticos.add(new Error("Sintactico", lexemaActual.getFila(), lexemaActual.getColumna(), errorMessage));
+                    System.out.println("Deteniendo");
+                    checking = false;
+                    break;
 
                 }
 
             }
+
         }
+
+
     }
 
 }

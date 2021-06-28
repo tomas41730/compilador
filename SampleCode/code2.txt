@@ -1,1 +1,41 @@
-(0+2)+3
+{
+
+	int x = 1;
+	int y = 2;
+	int z;
+
+	void main() {
+
+		z = 0;
+		while (z == 0) {
+
+			z = suma(x,y);
+
+		}
+
+
+		for (int x = 0; x < 3; x+1) {
+
+			int m;
+
+			m  = (l * a);
+
+		}
+
+
+		if (x > 1) {
+			suma(a,b);
+		} else if (x >2) {
+			suma(c,d);
+		} else {
+			suma(l,m);
+		}
+		end
+
+
+
+	}
+
+	
+
+}
