@@ -151,7 +151,7 @@ public class AnalizadorSemantico {
         System.out.println("Elementos: ");
         for(ElementoTabla elemento: tabla.getElementosDelScope()) {
 
-            System.out.println("tipo: " + elemento.getTipo() + ", identificador: " + elemento.getIdentificador() + ", fila: " + elemento.getLexema().getFila() + ", columna: " + elemento.getLexema().getColumna());
+            System.out.println("tipo: " + elemento.getTipo() + ", identificador: " + elemento.getIdentificador() + ", fila: " + elemento.getLexema().getFila() + ", columna: " + elemento.getLexema().getColumna() + ", metodo: " + elemento.isMetodo() + ", inicializado: " + elemento.isInicializado());
 
         }
 
