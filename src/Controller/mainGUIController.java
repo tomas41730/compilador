@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.AnalizadorLexico.AnalizadorLexico;
+import Model.AnalizadorSemantico.AnalizadorSemantico;
 import Model.SLR.SLR;
 
 import javafx.fxml.FXML;
@@ -29,7 +30,7 @@ public class mainGUIController implements Initializable
     @FXML
     private TableView tbvErrores;
     TextArea txtAreaCodigo;
-    String path = "SampleCode/code2.txt";
+    String path = "SampleCode/code.txt";
     @FXML
     private Label errorMessage;
 
@@ -79,14 +80,14 @@ public class mainGUIController implements Initializable
         return anaLex;
     }
 
-    private void anasin () {
+    private SLR anasin (AnalizadorLexico anaLex) {
 
-        AnalizadorLexico anaLex = this.analex();
+        SLR slr = null;
 
         if ( anaLex.getListaErrores().size() == 0 ) {
 
             tbvErrores.getItems().clear();
-            SLR slr = new SLR();
+            slr = new SLR();
             slr.evaluarCadena(anaLex.getListaLexemas());
 
             if (!slr.isAcepted()) {
@@ -104,12 +105,31 @@ public class mainGUIController implements Initializable
 
         }
         autoResizeColumns(tbvErrores);
+
+        return slr;
+
+    }
+
+    private void anaSem() {
+
+        AnalizadorLexico anaLex = this.analex();
+        SLR slr = this.anasin(anaLex);
+
+        if (slr != null && slr.getErroresSintacticos().size() == 0) {
+
+            AnalizadorSemantico anasem = new AnalizadorSemantico(slr.getArbol());
+
+            anasem.getErroresSemanticos().forEach(error -> tbvErrores.getItems().add(error));
+            autoResizeColumns(tbvErrores);
+
+        }
+
     }
 
     @FXML
     public void btnEvaluar()
     {
-        anasin();
+        anaSem();
     }
     @FXML
     public void btnArbol()

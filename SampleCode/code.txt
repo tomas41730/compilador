@@ -1,3 +1,40 @@
 {
- int x = 1;
+	int x = 1;
+
+	int main (){
+
+		int z;
+
+		for(int y = 0; y<4; y+1){
+			
+			string s;
+
+			if(x>0){
+
+				int p;
+
+				string s;
+
+			}end
+			
+		}
+
+	}
+
+	int suma() {
+
+		bool r;
+
+		string main;
+
+		bool z;
+
+		while(z == true) {
+
+			string p;
+
+		}
+
+	}
+
 }

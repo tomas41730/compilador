@@ -24,22 +24,27 @@ public class ArbolSintactico {
     @Override
     public String toString() {
 
-        String hijos = "[";
+        String text = "Nodo: (" + this.lexema.getSimbolo() + ", " + this.id + ")\n";
 
-        for (ArbolSintactico hijo: this.hijos) {
+        text = text + "Hijos: [";
 
-            hijos = hijos + " " + hijo.toString() + ",";
+        for (ArbolSintactico hijo : this.hijos) {
+
+            text = text + "(" + hijo.getLexema().getSimbolo() + ", " + hijo.getId() + "), ";
 
         }
 
-        //hijos = hijos.substring(0, hijos.length()-1);
-        hijos = hijos + " ]";
+        //text = text.substring(text.length()-1);
 
-        return "Nodo{" +
-                "id=" + id +
-                ", simbolo='" + data + '\'' +
-                ", hijos: " + hijos +
-                " }";
+        text = text + " ]\n";
+
+        for(ArbolSintactico hijo : this.hijos) {
+
+            text = text + hijo.toString();
+
+        }
+
+        return text;
     }
 
     public void agregarHijo(ArbolSintactico hijo) {
