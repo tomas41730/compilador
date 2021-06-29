@@ -237,7 +237,7 @@ public class SLR {
 
                         for (int i = 0; i < nroABorrar; i++) {
 
-                            hijos.add(nodosStack.get(nodosStack.size()-1-i));
+                            hijos.add(0, nodosStack.get(nodosStack.size()-1-i));
 
                         }
 
@@ -559,4 +559,11 @@ public class SLR {
 
     }
 
+    public ArbolSintactico getArbol() {
+        return arbol;
+    }
+
+    public void setArbol(ArbolSintactico arbol) {
+        this.arbol = arbol;
+    }
 }
