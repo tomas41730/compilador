@@ -4,6 +4,7 @@ import Controller.ArbolGUIController;
 import Controller.FormsOperations;
 import Controller.ManejoArchivos;
 import Model.AnalizadorLexico;
+import Model.CodeArea;
 import Model.SLR;
 
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -32,6 +34,7 @@ public class mainGUIController implements Initializable
     @FXML
     private TableView tbvErrores;
     TextArea txtAreaCodigo;
+    private CodeArea codeArea;
     String path = "SampleCode/code2.txt";
     @FXML
     private Label errorMessage;
@@ -62,7 +65,7 @@ public class mainGUIController implements Initializable
         fileChooser.setTitle("Upload File Path");
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
         path = file.getPath();
-        crearTabFichero(file);
+        //crearTabFichero(file);
         this.analex();
 
     }
@@ -124,15 +127,27 @@ public class mainGUIController implements Initializable
     public void crearTabFichero(File file)
     {
         ManejoArchivos.leerArchivo(file.getPath()).forEach(linea -> codigo =  codigo + linea + "\n");
-        txtAreaCodigo = new TextArea();
-        txtAreaCodigo.setPrefSize(916.0, 681.0);
-        txtAreaCodigo.setText(codigo);
+        WebView webView = new WebView();
+        webView.getEngine().load(getClass().getResource("Editor/Ace.html").toExternalForm());
+
+        System.out.println("antes");
+        codeArea = new CodeArea(webView);
+        System.out.println("despues");
+        codeArea.getCodeArea().setPrefSize(916.0, 681.0);
+        //codeArea.setText(codigo);
+//        txtAreaCodigo = new TextArea();
+//        txtAreaCodigo.setPrefSize(916.0, 681.0);
+//        txtAreaCodigo.setText(codigo);
         Tab fileTab = new Tab(file.getName());
         System.out.println(fileTab.getText());
-        fileTab.setContent(txtAreaCodigo);
+        //fileTab.setContent(txtAreaCodigo);
+        fileTab.setContent(codeArea.getCodeArea());
         tabPane.getTabs().add(fileTab);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         codigo = "";
+        //String code = (String) codeArea.getCodeArea().getEngine().executeScript("editor.getValue()");
+        System.out.println(codeArea.getCodeArea().getEngine().getLocation());
+
     }
     public void inicializarTBVDetalles()
     {
