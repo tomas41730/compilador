@@ -4,7 +4,6 @@ import Config.DictManager;
 import Model.AnalizadorLexico.Lexema;
 import Model.Error;
 import Model.SLR.ArbolSintactico;
-import sun.security.x509.EDIPartyName;
 
 import java.util.ArrayList;
 import java.util.List;
