@@ -241,11 +241,15 @@ public class SLR {
 
                         }
 
+
+                        int fila = stack.get(stack.size()-1).getFila();
+                        int columna = stack.get(stack.size()-1).getColumna();
+
                         this.borrarN(estados, nroABorrar);
                         this.borrarN(stack, nroABorrar);
                         this.borrarN(nodosStack, nroABorrar);
 
-                        stack.add(new Lexema(reglaDeReduccion.getId(), reglaDeReduccion.getId(), reglaDeReduccion.getId(), -1, -1, false));
+                        stack.add(new Lexema(reglaDeReduccion.getId(), reglaDeReduccion.getId(), reglaDeReduccion.getId(), fila, columna, false));
 
                         nodosStack.add(new ArbolSintactico(stack.get(stack.size()-1), idNodos));
                         idNodos++;
