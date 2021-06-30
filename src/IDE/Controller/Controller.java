@@ -56,51 +56,62 @@ public class Controller implements Initializable
 
 
 
-    String path = "SampleCode";
-    String content = "";
+    String directoryPath = "SampleCode";
+    String filePath = "";
+    String content = " ";
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
         webView.getEngine().load(getClass().getResource("Editor/Ace.html").toExternalForm());
         tbvErrores = new TableView();
         tbvDetalles = new TableView();
-        file_tree.setRoot(getNodesForDirectory(new File(path)));
+        inicializarTBVDetalles();
+        inicializarTBVErrores();
+        file_tree.setRoot(getNodesForDirectory(new File(directoryPath)));
         file_tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->  {
-
-            content = ManejoArchivos.file2str(path+ "\\" +((TreeItem) file_tree.getSelectionModel().getSelectedItem()).getValue());
+            filePath = directoryPath + "\\" +((TreeItem) file_tree.getSelectionModel().getSelectedItem()).getValue();
+            System.out.println("Listener: " + filePath);
+            content = ManejoArchivos.file2str(directoryPath + "\\" +((TreeItem) file_tree.getSelectionModel().getSelectedItem()).getValue());
             content = content.replace("'", "\\'");
             content = content.replace(System.getProperty("line.separator"), "\\n");
             content = content.replace("\n", "\\n");
             content = content.replace("\r", "\\n");
             webView.getEngine().executeScript("editor.setValue('"+content+"')");
-            showOutputSection();
-            anasin();
+            //showOutputSection();
+            //anasin();
             System.out.println(content);
         });
+
 
     }
 
     @FXML
-    public void btnRun() {
-        vboxAreaCode.getChildren().remove(vboxAreaCode.getChildren().size()-1);
-        content = content.replace("'", "\\'");
-        content = content.replace(System.getProperty("line.separator"), "\\n");
-        content = content.replace("\n", "\\n");
-        content = content.replace("\r", "\\n");
-        webView.getEngine().executeScript("editor.setValue('"+content+"')");
-        showOutputSection();
-        anasin();
+    public void btnRun() throws IOException {
+        //String codigo = webView.getEngine().executeScript("editor.getValue()").toString();
+        //ManejoArchivos.writeStringToFile(content, filePath);
+        System.out.println(filePath);
+        if(vboxAreaCode.getChildren().size() == 0)
+        {
+            showOutputSection();
+            anasin();
+
+        }
+        else
+        {
+            vboxAreaCode.getChildren().remove(0);
+            //System.out.println(vboxAreaCode.getChildren().get(0).toString());
+            showOutputSection();
+            anasin();
+        }
     }
 
     void showOutputSection() {
-        main_app_container.setMinHeight(main_app_container.getHeight() + 200);
+        //main_app_container.setMinHeight(main_app_container.getHeight() + 200);
         TabPane tabPane = new TabPane();
         tabPane.setPrefWidth(200);
         tabPane.setPrefHeight(200);
         Tab lex = new Tab("Lexico");
         Tab sin = new Tab("Sintactico");
-        inicializarTBVDetalles();
-        inicializarTBVErrores();
         lex.setContent(tbvDetalles);
         sin.setContent(tbvErrores);
         tabPane.getTabs().add(lex);
@@ -117,13 +128,13 @@ public class Controller implements Initializable
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload File Path");
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
-        path = file.getPath();
-        crearTab();
+        directoryPath = file.getPath();
+        setAreaCodeText();
         anasin();
         showOutputSection();
     }
-    public void crearTab(){
-        String codigo = ManejoArchivos.file2str(path);
+    public void setAreaCodeText(){
+        String codigo = ManejoArchivos.file2str(directoryPath);
         codigo = codigo.replace("'", "\\'");
         codigo = codigo.replace(System.getProperty("line.separator"), "\\n");
         codigo = codigo.replace("\n", "\\n");
@@ -135,7 +146,8 @@ public class Controller implements Initializable
         // ex eval
         tbvDetalles.getItems().clear();
         tbvErrores.getItems().clear();
-        List<String> lineas = ManejoArchivos.leerArchivo(path);
+        System.out.println("Analex path -> " + filePath);
+        List<String> lineas = ManejoArchivos.leerArchivo(filePath);
         AnalizadorLexico anaLex = new AnalizadorLexico();
         anaLex.AnalizarCodigo(lineas);
         anaLex.imprimirLexemas();
@@ -154,7 +166,7 @@ public class Controller implements Initializable
             slr.analizarCadena(anaLex.getListaLexemas());
 
             if (!slr.isAcepted()) {
-                this.status_info.setText("Error Sintactico");
+                this.status_info.setText("Error Sintactico en " + filePath);
             } else {
 
                 this.status_info.setText("Correcto!");
@@ -164,7 +176,7 @@ public class Controller implements Initializable
 
         } else {
 
-            this.status_info.setText("Error Lexico");
+            this.status_info.setText("Error Lexico en " + filePath);
 
         }
 
@@ -233,7 +245,7 @@ public class Controller implements Initializable
         DirectoryChooser dc = new DirectoryChooser();
         dc.setInitialDirectory(new File(System.getProperty("user.home")));
         File choice = dc.showDialog(null);
-        path = choice.getPath();
+        directoryPath = choice.getPath();
         if(choice == null || ! choice.isDirectory()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Could not open directory");
