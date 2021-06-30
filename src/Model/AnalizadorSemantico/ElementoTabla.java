@@ -1,6 +1,7 @@
 package Model.AnalizadorSemantico;
 
 import Model.AnalizadorLexico.Lexema;
+import Model.SLR.ArbolSintactico;
 
 public class ElementoTabla {
 
@@ -14,6 +15,17 @@ public class ElementoTabla {
 
     private boolean inicializado;
 
+    private ArbolSintactico referenciaArbol;
+
+
+    public ElementoTabla(Lexema lexema, String tipo, boolean metodo, ArbolSintactico arbol) {
+        this.lexema = lexema;
+        this.identificador = lexema.getValor();
+        this.tipo = tipo;
+        this.metodo = metodo;
+        this.inicializado = false;
+        this.referenciaArbol = arbol;
+    }
 
     public ElementoTabla(Lexema lexema, String tipo, boolean metodo) {
         this.lexema = lexema;
@@ -21,6 +33,7 @@ public class ElementoTabla {
         this.tipo = tipo;
         this.metodo = metodo;
         this.inicializado = false;
+        this.referenciaArbol = null;
     }
 
     public boolean isMetodo() {
@@ -61,5 +74,13 @@ public class ElementoTabla {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public ArbolSintactico getReferenciaArbol() {
+        return referenciaArbol;
+    }
+
+    public void setReferenciaArbol(ArbolSintactico referenciaArbol) {
+        this.referenciaArbol = referenciaArbol;
     }
 }

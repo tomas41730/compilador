@@ -1,32 +1,44 @@
 {
 	int x = 1;
+	[string] a;
 
 	int main (){
 
 		int z;
 
-		for(int y = 0; y<4; y+1){
+		for(int y = 0; y<4; z+1){
 			
 			string s;
 
-			if(x>0){
+			if(y && 0){
 
-				int p;
+				int p = suma("a");
 
 				string s;
+
+				r=2;
 
 			}end
 			
 		}
 
+		return "as";
+
 	}
 
-	int suma() {
+	int suma(string j) {
 
-		bool r;
+		string l;
 
-		string main;
+		string t = l;
 
+		bool r = "asa";
+		l = (j + "a");
+		
+		j();
+
+		main = 5;
+		
 		bool z;
 
 		while(z == true) {
@@ -35,6 +47,12 @@
 
 		}
 
+		return 1;
+
+	}
+
+	void xp() {
+		return 0;
 	}
 
 }

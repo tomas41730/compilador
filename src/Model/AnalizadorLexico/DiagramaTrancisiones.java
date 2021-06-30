@@ -146,7 +146,7 @@ public class DiagramaTrancisiones
         this.expresionesRegulares.put("letra", "[a-zA-Z]");
         this.expresionesRegulares.put("identificadorChar", "[_a-zA-Z0-9]");
         this.expresionesRegulares.put("numero", "[0-9]");
-        this.expresionesRegulares.put("Op. Aritmetico", "[\\+|-|\\*|\\/|%]");
+        this.expresionesRegulares.put("Op. Aritmetico", "[\\+|\\-|\\*|\\/|%]");
         this.expresionesRegulares.put("igual", "=");
         this.expresionesRegulares.put("and", "&");
         this.expresionesRegulares.put("or", "\\|");

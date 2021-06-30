@@ -86,6 +86,8 @@ public class mainGUIController implements Initializable
 
         if ( anaLex.getListaErrores().size() == 0 ) {
 
+            System.out.println("Sin errores lexicos");
+
             tbvErrores.getItems().clear();
             slr = new SLR();
             slr.evaluarCadena(anaLex.getListaLexemas());
