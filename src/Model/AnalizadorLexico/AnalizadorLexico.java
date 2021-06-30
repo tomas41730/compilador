@@ -1,7 +1,8 @@
-package Model;
+package Model.AnalizadorLexico;
+
+import Model.Error;
 
 import java.util.*;
-import java.util.stream.*;
 
 public class AnalizadorLexico
 {

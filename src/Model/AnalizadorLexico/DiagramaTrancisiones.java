@@ -1,11 +1,10 @@
-package Model;
+package Model.AnalizadorLexico;
 
 import Config.DictManager;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import Config.DictManager;
 
 public class DiagramaTrancisiones
 {
@@ -147,7 +146,7 @@ public class DiagramaTrancisiones
         this.expresionesRegulares.put("letra", "[a-zA-Z]");
         this.expresionesRegulares.put("identificadorChar", "[_a-zA-Z0-9]");
         this.expresionesRegulares.put("numero", "[0-9]");
-        this.expresionesRegulares.put("Op. Aritmetico", "[\\+|-|\\*|\\/|%]");
+        this.expresionesRegulares.put("Op. Aritmetico", "[\\+|\\-|\\*|\\/|%]");
         this.expresionesRegulares.put("igual", "=");
         this.expresionesRegulares.put("and", "&");
         this.expresionesRegulares.put("or", "\\|");
@@ -179,6 +178,7 @@ public class DiagramaTrancisiones
         this.tablaPalabrasReservadas.put("return", "return");
         this.tablaPalabrasReservadas.put("true", "true");
         this.tablaPalabrasReservadas.put("false", "false");
+        this.tablaPalabrasReservadas.put("end", "end");
     }
 
     public List<Lexema> analizarLexema(String lexema, int fila, int columna_ini) //cambiar void por tupla de ser posible, caso contrario cambiarlo a List<String, String>

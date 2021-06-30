@@ -1,7 +1,8 @@
 package IDE.Controller;
 
-import Model.AnalizadorLexico;
-import Model.SLR;
+import Model.AnalizadorLexico.AnalizadorLexico;
+import Model.AnalizadorSemantico.AnalizadorSemantico;
+import Model.SLR.SLR;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
@@ -10,6 +11,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
@@ -93,7 +96,7 @@ public class Controller implements Initializable
         if(vboxAreaCode.getChildren().size() == 0)
         {
             showOutputSection();
-            anasin();
+            anaSem();
 
         }
         else
@@ -101,8 +104,10 @@ public class Controller implements Initializable
             vboxAreaCode.getChildren().remove(0);
             //System.out.println(vboxAreaCode.getChildren().get(0).toString());
             showOutputSection();
-            anasin();
+            anaSem();
         }
+        autoResizeColumn(tcValor, tbvDetalles);
+        autoResizeColumn(tcDescripcion, tbvErrores);
     }
 
     void showOutputSection() {
@@ -110,17 +115,13 @@ public class Controller implements Initializable
         TabPane tabPane = new TabPane();
         tabPane.setPrefWidth(200);
         tabPane.setPrefHeight(200);
-        Tab lex = new Tab("Lexico");
-        Tab sin = new Tab("Sintactico");
+        Tab lex = new Tab("Tabla de Lexemas");
+        Tab sin = new Tab("Tabla de Errores");
         lex.setContent(tbvDetalles);
         sin.setContent(tbvErrores);
         tabPane.getTabs().add(lex);
         tabPane.getTabs().add(sin);
         vboxAreaCode.getChildren().add(tabPane);
-        autoResizeColumn(tcValor, tbvDetalles);
-        autoResizeColumn(tcDescripcion, tbvErrores);
-
-
     }
     @FXML
     public void openFile() throws IOException
@@ -130,7 +131,7 @@ public class Controller implements Initializable
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
         directoryPath = file.getPath();
         setAreaCodeText();
-        anasin();
+        anaSem();
         showOutputSection();
     }
     public void setAreaCodeText(){
@@ -142,28 +143,32 @@ public class Controller implements Initializable
         webView.getEngine().executeScript("editor.setValue('"+codigo+"')");
 
     }
+
     private AnalizadorLexico analex () {
         // ex eval
         tbvDetalles.getItems().clear();
         tbvErrores.getItems().clear();
-        System.out.println("Analex path -> " + filePath);
         List<String> lineas = ManejoArchivos.leerArchivo(filePath);
         AnalizadorLexico anaLex = new AnalizadorLexico();
         anaLex.AnalizarCodigo(lineas);
         anaLex.imprimirLexemas();
         anaLex.getListaLexemas().forEach(lexema -> tbvDetalles.getItems().add(lexema));
         anaLex.getListaErrores().forEach(error ->  tbvErrores.getItems().add(error));
+
         return anaLex;
     }
-    private void anasin () {
 
-        AnalizadorLexico anaLex = this.analex();
+    private SLR anasin (AnalizadorLexico anaLex) {
+
+        SLR slr = null;
 
         if ( anaLex.getListaErrores().size() == 0 ) {
 
+            System.out.println("Sin errores lexicos");
+
             tbvErrores.getItems().clear();
-            SLR slr = new SLR();
-            slr.analizarCadena(anaLex.getListaLexemas());
+            slr = new SLR();
+            slr.evaluarCadena(anaLex.getListaLexemas());
 
             if (!slr.isAcepted()) {
                 this.status_info.setText("Error Sintactico en " + filePath);
@@ -179,7 +184,29 @@ public class Controller implements Initializable
             this.status_info.setText("Error Lexico en " + filePath);
 
         }
+        //autoResizeColumn(tcDescripcion);
 
+        return slr;
+
+    }
+
+    private void anaSem() {
+
+        AnalizadorLexico anaLex = this.analex();
+        SLR slr = this.anasin(anaLex);
+
+        if (slr != null && slr.getErroresSintacticos().size() == 0) {
+
+            AnalizadorSemantico anasem = new AnalizadorSemantico(slr.getArbol());
+
+            anasem.getErroresSemanticos().forEach(error -> tbvErrores.getItems().add(error));
+            //autoResizeColumns(tbvErrores);
+            if(anasem.getErroresSemanticos().size() > 0)
+            {
+                //status_info.setTextFill(new Color());
+                status_info.setText("Errores semanticos en " + filePath);
+            }
+        }
     }
     public void inicializarTBVDetalles()
     {

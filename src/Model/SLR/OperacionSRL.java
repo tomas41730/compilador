@@ -1,4 +1,4 @@
-package Model;
+package Model.SLR;
 
 public class OperacionSRL {
 

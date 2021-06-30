@@ -1,16 +1,58 @@
 {
-	int x = 0
-	int y = 1.2
+	int x = 1;
+	[string] a;
 
-	int add(a,b) {
-		return a+b
+	int main (){
+
+		int z;
+
+		for(int y = 0; y<4; z+1){
+			
+			string s;
+
+			if(y && 0){
+
+				int p = suma("a");
+
+				string s;
+
+				r=2;
+
+			}end
+			
+		}
+
+		return "as";
+
 	}
 
-	void main(){
-		z=add(x,y)
-		if (x==z){
-			return 0;
+	int suma(string j) {
+
+		string l;
+
+		string t = l;
+
+		bool r = "asa";
+		l = (j + "a");
+		
+		j();
+
+		main = 5;
+		
+		bool z;
+
+		while(z == true) {
+
+			string p;
+
 		}
+
+		return 1;
+
+	}
+
+	void xp() {
+		return 0;
 	}
 
 }

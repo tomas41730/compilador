@@ -1,15 +1,11 @@
 package View;
 
 
-import Model.GLC;
-import Model.SLR;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import Config.DictManager;
 
 
 public class Main extends Application {

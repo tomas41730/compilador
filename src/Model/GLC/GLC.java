@@ -1,4 +1,4 @@
-package Model;
+package Model.GLC;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -88,7 +88,7 @@ public class GLC {
 
     private void genSiguientesOfRule(GLCRule rule) {
 
-        if (rule.getSiguientes().size() == 0){
+        if (rule != null && rule.getSiguientes().size() == 0){
 
             //System.out.println("Siguientes de : " + rule.getId());
             this.alreadyLooking.add(rule.getId());
@@ -314,18 +314,18 @@ public class GLC {
 
     private void genPrimerosOfRule(GLCRule rule) {
 
-        if (rule.getPrimeros().size() == 0){
+        if (rule != null && rule.getPrimeros().size() == 0){
 
             this.alreadyLooking.add(rule.getId());
-            //System.out.println("Primeros de la relga: " + rule.getId());
+            System.out.println("Primeros de la relga: " + rule.getId());
 
-            //System.out.println("Already looking for: " + this.alreadyLooking.toString());
+            System.out.println("Already looking for: " + this.alreadyLooking.toString());
 
             List<GLCTerm> firsts = new ArrayList<>();
 
             for(GLCoption option: rule.getOpciones()){
 
-                //System.out.println("Buscando primeros de la relga " + rule.getId() + " en la opcion: " + option.printOpcion());
+                System.out.println("Buscando primeros de la relga " + rule.getId() + " en la opcion: " + option.printOpcion());
 
                 if (option.getPrimerTermino().isTerminal()) {
 
@@ -418,6 +418,7 @@ public class GLC {
         this.terminales.put("a1", new GLCTerm(true, "a1"));
         this.terminales.put("b1", new GLCTerm(true, "b1"));
         this.terminales.put("c1", new GLCTerm(true, "c1"));
+        this.terminales.put("d1", new GLCTerm(true, "d1"));
 
         this.terminales.put("eps", new GLCTerm(true, "eps", ""));
 
@@ -586,14 +587,108 @@ public class GLC {
         this.reglasGLCporLetra = new Hashtable();
         this.reglasGLCporNumero = new ArrayList<>();
 
-        // condicion -> expresion operador logico expresion
-        this.agregarRegla("E", Arrays.asList("G", "e", "G"), true);
+        // programa -> { <declaraciones
 
-        // expresion -> operacion | constante | callmethod()
+        this.agregarRegla("S", Arrays.asList("o", "A"), true);
+
+        // declaraciones -> declaracion declaraciones | }
+
+        this.agregarRegla("A", Arrays.asList("B", "A"));
+        this.agregarRegla("A", Arrays.asList("p"));
+
+        // declaracion -> declaraciones variables; | delcaraciones metodo
+
+        this.agregarRegla("B", Arrays.asList("Y","i"));
+        this.agregarRegla("B", Arrays.asList("K"));
+
+        //ordenes -> ordenordenes|}
+        this.agregarRegla("C", Arrays.asList("D","C"));
+        this.agregarRegla("C", Arrays.asList("p"));
+
+        //orden -> declaracion_variable | ifblock | whileloop | for_loop | asignacion | callmethos | return expresion
+
+        this.agregarRegla("D", Arrays.asList("Y","i"));
+        this.agregarRegla("D", Arrays.asList("V"));
+        this.agregarRegla("D", Arrays.asList("J"));
+        this.agregarRegla("D", Arrays.asList("I"));
+        this.agregarRegla("D", Arrays.asList("F","i"));
+        this.agregarRegla("D", Arrays.asList("H","i"));
+        this.agregarRegla("D", Arrays.asList("z", "G","i"));
+
+        // condicion -> expresion operador logico expresion
+
+        this.agregarRegla("E", Arrays.asList("G", "e", "G"));
+
+        // asignacion -> identificador = expresion;
+
+        this.agregarRegla("F", Arrays.asList("a", "f", "G"));
+
+        // expresion -> (operacion) | constante | callmethod()
 
         this.agregarRegla("G", Arrays.asList("k","Z","l"));
         this.agregarRegla("G", Arrays.asList("X"));
-        //this.agregarRegla("G", Arrays.asList("H"));
+        this.agregarRegla("G", Arrays.asList("H"));
+
+        // callmethod -> identificador(parametros_uso
+
+        this.agregarRegla("H", Arrays.asList("a","k", "M1"));
+
+        // forloop -> for(declaracionvariable;condicion;operacionAritmetica){ordenes
+
+        this.agregarRegla("I", Arrays.asList("v","k","Y", "i","E","i","A1","l","o","C"));
+
+        // <while_loop> -> while (<condicion>) {<ordenes>
+
+        this.agregarRegla("J",Arrays.asList("w","k","E","l","o","C"));
+
+        //<declaracion_metodo> -> <tipo> identificador (<parametros_metodo> { <ordenes>
+
+        this.agregarRegla("K", Arrays.asList("U", "a", "k", "D1", "o","C"));
+
+        // lista_enteros -> , entero lista_enteros | ]
+
+        this.agregarRegla("L", Arrays.asList("j", "b", "L"));
+        this.agregarRegla("L", Arrays.asList("n"));
+
+         //<lista_elementos_real> -> , numero real lista_reales | ]
+
+        this.agregarRegla("N", Arrays.asList("j", "c", "N"));
+        this.agregarRegla("N", Arrays.asList("n"));
+
+        // lista string -> , string lista_string | ]
+
+        this.agregarRegla("P", Arrays.asList("j", "g", "P"));
+        this.agregarRegla("P", Arrays.asList("n"));
+
+        // tipo -> int | real | bool | [tipo] | void | string
+
+        this.agregarRegla("U", Arrays.asList("q"));
+        this.agregarRegla("U", Arrays.asList("r"));
+        this.agregarRegla("U", Arrays.asList("s"));
+        this.agregarRegla("U", Arrays.asList("m","U","n"));
+        this.agregarRegla("U", Arrays.asList("y"));
+        this.agregarRegla("U", Arrays.asList("x"));
+
+        // ifblock -> if (condicion) {ordenes elseblock
+
+        this.agregarRegla("V", Arrays.asList("t","k","E","l","o","C","F1"));
+
+        // bool -> true | false
+        this.agregarRegla("W", Arrays.asList("a1"));
+        this.agregarRegla("W", Arrays.asList("b1"));
+
+        // constante -> entero | cadena | real | identificador | bool | lista
+
+        this.agregarRegla("X", Arrays.asList("b"));
+        this.agregarRegla("X", Arrays.asList("g"));
+        this.agregarRegla("X", Arrays.asList("c"));
+        this.agregarRegla("X", Arrays.asList("a"));
+        this.agregarRegla("X", Arrays.asList("W"));
+        this.agregarRegla("X", Arrays.asList("E1"));
+
+        // declaracion variable -> tipo objetivo_declaracion
+
+          this.agregarRegla("Y", Arrays.asList("U", "H1"));
 
         // operacion -> operacion_aritmetica | condicion
 
@@ -604,18 +699,64 @@ public class GLC {
 
         this.agregarRegla("A1", Arrays.asList("G", "d", "G"));
 
-        // constante -> entero | string | bool | lista
+        // parametro_declaracion -> tipo identificador
 
-        this.agregarRegla("X", Arrays.asList("b"));
-        this.agregarRegla("X", Arrays.asList("g"));
-        this.agregarRegla("X", Arrays.asList("c"));
-        //this.agregarRegla("X", Arrays.asList("a"));
-        this.agregarRegla("X", Arrays.asList("W"));
-        // this.agregarRegla("X", Arrays.asList("E1"));
+        this.agregarRegla("B1", Arrays.asList("U", "a"));
 
-        // bool -> true | false
-        this.agregarRegla("W", Arrays.asList("a1"));
-        this.agregarRegla("W", Arrays.asList("b1"));
+        // tipo_lista -> entero lista enteros | real lista_real | string lista_string | boolean lista boolean| ]
+
+        this.agregarRegla("C1", Arrays.asList("b","L"));
+        this.agregarRegla("C1", Arrays.asList("c","N"));
+        this.agregarRegla("C1", Arrays.asList("g","P"));
+        this.agregarRegla("C1", Arrays.asList("W","I1"));
+        this.agregarRegla("C1", Arrays.asList("n"));
+
+        // parametros_metodo -> parametro_declaracion parametros_declaracion | )
+
+        this.agregarRegla("D1", Arrays.asList("B1", "J1"));
+        this.agregarRegla("D1", Arrays.asList("l"));
+
+        // lista -> [tipo_lista
+
+        this.agregarRegla("E1", Arrays.asList("m","C1"));
+
+        // elseblock -> else <next_cond> | end
+
+        this.agregarRegla("F1", Arrays.asList("u","G1"));
+        this.agregarRegla("F1", Arrays.asList("d1"));
+
+        // next_condition -> ifblock | {ordenes end
+
+        this.agregarRegla("G1", Arrays.asList("V"));
+        this.agregarRegla("G1", Arrays.asList("o","C","d1"));
+
+        // objetivo_declaracion -> asignacion | identificador
+
+        this.agregarRegla("H1", Arrays.asList("F"));
+        this.agregarRegla("H1", Arrays.asList("a"));
+
+        // lista_bool -> , bool Lista_bool | ]
+
+        this.agregarRegla("I1", Arrays.asList("j","W", "I1"));
+        this.agregarRegla("I1", Arrays.asList("n"));
+
+        // parametros_declaracion -> , parametro_declaracion parametros_declaracion | )
+
+        this.agregarRegla("J1", Arrays.asList("j", "B1", "J1"));
+        this.agregarRegla("J1", Arrays.asList("l"));
+
+        // parametro_llamada -> expresion
+        this.agregarRegla("K1", Arrays.asList("G"));
+
+        //parametros_llamada -> parametro_llamada parametros_llamada | )
+
+        this.agregarRegla("L1", Arrays.asList("j","K1","L1"));
+        this.agregarRegla("L1", Arrays.asList("l"));
+
+        //parametros_uso -> parametro_llamada parametros_llamada | )
+
+        this.agregarRegla("M1", Arrays.asList("K1", "L1"));
+        this.agregarRegla("M1", Arrays.asList("l"));
 
         this.printReglas();
 

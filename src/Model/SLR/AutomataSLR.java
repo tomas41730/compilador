@@ -1,4 +1,7 @@
-package Model;
+package Model.SLR;
+
+import Model.GLC.GLCRule;
+import Model.GLC.GLCTerm;
 
 import java.util.*;
 
