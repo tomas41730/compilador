@@ -4,6 +4,7 @@ import Config.DictManager;
 import Model.AnalizadorLexico.Lexema;
 import Model.Error;
 import Model.SLR.ArbolSintactico;
+import sun.security.x509.EDIPartyName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,35 @@ public class AnalizadorSemantico {
         this.tabla = this.generarTablas(this.arbolSintatico, -1, this.arbolSintatico.getId());
         this.actualizarConPadres(this.tabla);
         this.finalizarAnalisis(this.arbolSintatico, this.tabla);
+        this.buscarMain();
         this.printTablas();
+    }
+
+    private void buscarMain() {
+
+        ElementoTabla main= null;
+
+        for (ElementoTabla elementoTabla : this.tabla.getElementosDelScope()){
+
+            if(elementoTabla.getIdentificador().equals("main")) {
+
+                main = elementoTabla;
+                break;
+
+            }
+
+        }
+
+        if (main == null) {
+
+            this.erroresSemanticos.add(new Error("Semantico", 0, 0, "No se encontro el metodo principal 'main'"));
+
+        } else if (!main.isMetodo()) {
+
+            this.erroresSemanticos.add(new Error("Semantico", main.getLexema().getFila(), main.getLexema().getColumna(), "El identificador main solo debe ser usado para el metodo principal"));
+
+        }
+
     }
 
     private void finalizarAnalisis(ArbolSintactico arbol, TablaScopes tablaDelScope){
