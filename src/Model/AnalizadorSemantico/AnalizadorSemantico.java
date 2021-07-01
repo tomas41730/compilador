@@ -287,7 +287,7 @@ public class AnalizadorSemantico {
 
                         String tipoErr2 = parametrosMethod.get(j);
 
-                        if (tipoErr2.length() == 1) {
+                        if (tipoErr2.length() >= 1) {
 
                             tipoErr2 = (String) DictManager.simbolToToken().get(tipoErr2);
 
@@ -996,18 +996,18 @@ public class AnalizadorSemantico {
 
         for (ArbolSintactico hijo: declaracion.getHijos()) {
 
-            if (hijo.getData() == "U") {
+            if (hijo.getData().equals("U")) {
                 //U
 
                 tipo = determinarTipo(hijo);
 
 
-            } else if (hijo.getData() == "H1"){
+            } else if (hijo.getData().equals("H1")){
                 //H1
 
                 ArbolSintactico subhijo = hijo.getHijos().get(0);
 
-                if (subhijo.getData() == "a") {
+                if (subhijo.getData().equals("a")) {
 
                     lex = subhijo.getLexema();
 
@@ -1015,7 +1015,7 @@ public class AnalizadorSemantico {
                     f = true;
                     for (ArbolSintactico nieto : subhijo.getHijos()) {
 
-                       if (nieto.getData() == "a") {
+                       if (nieto.getData().equals("a")) {
 
                            lex = nieto.getLexema();
 

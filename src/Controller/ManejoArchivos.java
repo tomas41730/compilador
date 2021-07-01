@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -56,4 +57,83 @@ public class ManejoArchivos
         }
         return linea;
     }
+
+    public static List<String> devolverIDs() {
+
+        List<String> lineas = leerArchivo("src/Config/gramatica.txt");
+
+        List<String> ids = new ArrayList<>();
+
+        for (int i =0; i< lineas.size(); i++){
+
+            if (i % 2 == 0 && !lineas.get(i).equals("")) {
+
+                String linea = lineas.get(i);
+                String definicion = lineas.get(i+1);
+                definicion = definicion.replace(" ", "");
+                definicion = definicion.replace("\t", "");
+
+
+                String[] opcionesB = definicion.split("\\|");
+                List<String> opciones = Arrays.asList(opcionesB);
+
+                //System.out.println(opciones.toString());
+
+                for (String opcion : opciones) {
+
+                    //System.out.println("op " + opcion);
+
+                    ids.add(linea);
+
+                    //System.out.println(definicion);
+
+                }
+
+            }
+
+
+
+        }
+
+        return ids;
+
+    }
+
+    public static List<List<String>> devolverProducciones(){
+
+        // [["A","C"],["c","A]]
+
+        List<String> lineas = leerArchivo("src/Config/gramatica.txt");
+
+        List<List<String>> producciones = new ArrayList<>();
+
+        for (int i =0; i< lineas.size(); i++){
+
+            if (i % 2 != 0 && !lineas.get(i).equals("")) {
+
+                String linea = lineas.get(i);
+                linea = linea.replace(" ", "");
+                linea = linea.replace("\t", "");
+
+                String[] opcionesB = linea.split("\\|");
+                List<String> opciones = Arrays.asList(opcionesB);
+
+                for (String opcion : opciones) {
+
+                    String[] terminosB = opcion.split(",");
+                    List<String> terminos = Arrays.asList(terminosB);
+                    producciones.add(terminos);
+
+                }
+
+            }
+
+
+
+        }
+
+        return producciones;
+
+    }
+
 }

@@ -12,7 +12,9 @@
 
 			if(y && 0){
 
-				int p = suma("a");
+				int p;
+				
+				suma();
 
 				string s;
 

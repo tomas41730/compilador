@@ -1,5 +1,7 @@
 package Model.GLC;
 
+import Controller.ManejoArchivos;
+
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -20,7 +22,8 @@ public class GLC {
 
         this.crearTerminales();
         this.crearNoTerminales();
-        this.crearReglasGLC();
+        //this.crearReglasGLC();
+        this.leerReglasGLC();
         this.alreadyLooking = new ArrayList<>();
         this.genPrimeros();
         this.dolar = new GLCTerm(true, "$", "");
@@ -579,6 +582,44 @@ public class GLC {
             x++;
         }
 
+
+    }
+
+    private void leerReglasGLC(){
+
+        this.reglasGLCporLetra = new Hashtable();
+        this.reglasGLCporNumero = new ArrayList<>();
+
+        List<String> a = ManejoArchivos.devolverIDs();
+
+        List<List<String>> b = ManejoArchivos.devolverProducciones();
+
+        for (int i =0; i < a.size(); i++){
+
+            String id = a.get(i);
+            List<String> terminos = b.get(i);
+
+            System.out.println("ID: " + id + ", terminos: " + terminos.toString());
+
+            boolean inicial = false;
+
+            if (i==0) {
+
+                System.out.println("Inicial");
+
+                inicial = true;
+                this.agregarRegla(id, terminos, inicial);
+
+            } else {
+
+                this.agregarRegla(id, terminos);
+
+            }
+
+
+        }
+
+        this.printReglas();
 
     }
 
