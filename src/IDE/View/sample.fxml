@@ -358,7 +358,7 @@
                                       <content>
                                         <AnchorPane style="-fx-background-color: #fff;">
                                           <children>
-                                            <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                            <WebView fx:id="webView" onMouseClicked="#getCursorPosition" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                           </children>
                                         </AnchorPane>
                                       </content>
@@ -487,7 +487,7 @@
                       <items>
                         <HBox spacing="10.0">
                           <children>
-                            <Label contentDisplay="RIGHT" text="0:0">
+                            <Label fx:id="lbRowColumn" contentDisplay="RIGHT" text="0:0">
                               <font>
                                 <Font size="13.0" />
                               </font>

@@ -808,7 +808,7 @@ var JavaHighlightRules = function() {
     "char|final|interface|static|void|" +
     "class|finally|long|strictfp|volatile|" +
     "const|float|native|super|while|" +
-    "var"
+    "var|string|real"
     );
 
     var buildinConstants = ("null|Infinity|NaN|undefined");
@@ -838,7 +838,7 @@ var JavaHighlightRules = function() {
         "ArrayStoreException|ClassCastException|LinkageError|"+
         "NoClassDefFoundError|ClassNotFoundException|RuntimeException|"+
         "Exception|ThreadDeath|Error|Throwable|System|ClassLoader|"+
-        "Cloneable|Class|CharSequence|Comparable|String|Object"
+        "Cloneable|Class|CharSequence|Comparable|Object"
     );
 
     var keywordMapper = this.createKeywordMapper({

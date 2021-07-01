@@ -3,6 +3,7 @@ package IDE.Controller;
 import Model.AnalizadorLexico.AnalizadorLexico;
 import Model.AnalizadorSemantico.AnalizadorSemantico;
 import Model.SLR.SLR;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
@@ -10,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -17,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import netscape.javascript.JSObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +36,8 @@ public class Controller implements Initializable
     private DialogPane dialogPane;
     @FXML
     private Label status_info;
+    @FXML
+    private Label lbRowColumn;
 
     private TableView tbvDetalles;
 
@@ -61,7 +67,7 @@ public class Controller implements Initializable
 
     String directoryPath = "SampleCode";
     String filePath = "";
-    String content = " ";
+    String content = "";
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
@@ -73,20 +79,26 @@ public class Controller implements Initializable
         file_tree.setRoot(getNodesForDirectory(new File(directoryPath)));
         file_tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->  {
             filePath = directoryPath + "\\" +((TreeItem) file_tree.getSelectionModel().getSelectedItem()).getValue();
-            System.out.println("Listener: " + filePath);
             content = ManejoArchivos.file2str(directoryPath + "\\" +((TreeItem) file_tree.getSelectionModel().getSelectedItem()).getValue());
-            content = content.replace("'", "\\'");
-            content = content.replace(System.getProperty("line.separator"), "\\n");
-            content = content.replace("\n", "\\n");
-            content = content.replace("\r", "\\n");
-            webView.getEngine().executeScript("editor.setValue('"+content+"')");
+            setAreaCodeText(content);
             //showOutputSection();
             //anasin();
             System.out.println(content);
         });
-
+        EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                int row = (int) webView.getEngine().executeScript("editor.selection.getCursor().row")+1;
+                int column = (int) webView.getEngine().executeScript("editor.selection.getCursor().column")+1;
+                String position = row + ":" + column;
+                System.out.println("Cursor Postion -> " + position );
+                lbRowColumn.setText(position);
+            }
+        };
+        webView.addEventFilter(MouseEvent.MOUSE_CLICKED,eventHandler);
 
     }
+
 
     @FXML
     public void btnRun() throws IOException {
@@ -130,12 +142,12 @@ public class Controller implements Initializable
         fileChooser.setTitle("Upload File Path");
         File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
         directoryPath = file.getPath();
-        setAreaCodeText();
+        content = ManejoArchivos.file2str(directoryPath);
+        setAreaCodeText(content);
         anaSem();
         showOutputSection();
     }
-    public void setAreaCodeText(){
-        String codigo = ManejoArchivos.file2str(directoryPath);
+    public void setAreaCodeText(String codigo){
         codigo = codigo.replace("'", "\\'");
         codigo = codigo.replace(System.getProperty("line.separator"), "\\n");
         codigo = codigo.replace("\n", "\\n");
@@ -296,5 +308,8 @@ public class Controller implements Initializable
         }
         return root;
     }
+    @FXML
+    public void getCursorPosition(){
 
+    }
 }
