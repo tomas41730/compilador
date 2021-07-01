@@ -20,7 +20,6 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import netscape.javascript.JSObject;
 
 import java.io.File;
 import java.io.IOException;
