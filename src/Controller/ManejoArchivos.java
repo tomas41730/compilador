@@ -36,4 +36,24 @@ public class ManejoArchivos
     public static void writeStringToFile(String path, String data) throws IOException {
         Files.write( Paths.get(path), data.getBytes());
     }
+    public static String file2str(String path)
+    {
+        String linea = "";
+        try
+        {
+            File archivo = new File(path);
+            Scanner scanner = new Scanner(archivo);
+            while (scanner.hasNextLine())
+            {
+                linea = linea + scanner.nextLine() + "\n";
+            }
+            scanner.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("Error, archivo no encontrado.");
+            e.printStackTrace();
+        }
+        return linea;
+    }
 }

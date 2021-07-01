@@ -11,11 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
@@ -27,6 +24,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import Controller.ManejoArchivos;
 public class Controller implements Initializable
 {
     @FXML
@@ -49,6 +47,10 @@ public class Controller implements Initializable
     private SplitPane splitPane;
     @FXML
     private TreeView file_tree;
+    @FXML
+    private Tab mainTab;
+    @FXML
+    private Button btnProject;
     Image file = new Image(getClass().getResourceAsStream("/IDE/Controller/resources/fileIcon.png"));
     Image folder = new Image(getClass().getResourceAsStream("/IDE/Controller/resources/folderIcon.png"));
     TableColumn tcValor;
@@ -82,6 +84,8 @@ public class Controller implements Initializable
             setAreaCodeText(content);
             //showOutputSection();
             //anasin();
+            File choice =  new File(filePath);
+            mainTab.setText(choice.getName());
             System.out.println(content);
         });
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
@@ -101,8 +105,8 @@ public class Controller implements Initializable
 
     @FXML
     public void btnRun() throws IOException {
-        //String codigo = webView.getEngine().executeScript("editor.getValue()").toString();
-        //ManejoArchivos.writeStringToFile(content, filePath);
+        String codigo = webView.getEngine().executeScript("editor.getValue()").toString();
+        ManejoArchivos.writeStringToFile(filePath, codigo);
         System.out.println(filePath);
         if(vboxAreaCode.getChildren().size() == 0)
         {
@@ -137,14 +141,34 @@ public class Controller implements Initializable
     @FXML
     public void openFile() throws IOException
     {
+//        FileChooser fileChooser = new FileChooser();
+//        fileChooser.setTitle("Upload File Path");
+//        File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
+//        directoryPath = file.getPath();
+//        content = ManejoArchivos.file2str(directoryPath);
+//        setAreaCodeText(content);
+//        anaSem();
+//        showOutputSection();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload File Path");
-        File file = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
-        directoryPath = file.getPath();
-        content = ManejoArchivos.file2str(directoryPath);
-        setAreaCodeText(content);
-        anaSem();
-        showOutputSection();
+        File choice = fileChooser.showOpenDialog(dialogPane.getScene().getWindow());
+        filePath = choice.getPath();
+        btnProject.setText(choice.getName());
+        if(choice == null || ! choice.isFile()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Could not open file");
+            alert.setContentText("The file is invalid.");
+
+            alert.showAndWait();
+        }
+        else {
+            //file_tree.setRoot(getNodesForDirectory(choice));
+            directoryPath = choice.getParent();
+            file_tree.setRoot(new TreeItem(choice.getName()));
+            mainTab.setText(choice.getName());
+            setAreaCodeText(ManejoArchivos.file2str(filePath));
+            System.out.println(filePath);
+        }
     }
     public void setAreaCodeText(String codigo){
         codigo = codigo.replace("'", "\\'");
@@ -284,6 +308,7 @@ public class Controller implements Initializable
         dc.setInitialDirectory(new File(System.getProperty("user.home")));
         File choice = dc.showDialog(null);
         directoryPath = choice.getPath();
+        btnProject.setText(choice.getName());
         if(choice == null || ! choice.isDirectory()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Could not open directory");

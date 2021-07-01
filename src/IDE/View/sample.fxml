@@ -1,46 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Group?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ContextMenu?>
-<?import javafx.scene.control.DialogPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.web.WebView?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 
-<VBox fx:id="main_app_container" prefHeight="744.0" prefWidth="1012.0" stylesheets="@../Controller/Main3.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="IDE.Controller.Controller">
+<VBox fx:id="main_app_container" prefHeight="744.0" prefWidth="1012.0" stylesheets="@../Controller/Main3.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="IDE.Controller.Controller">
   <children>
     <MenuBar fx:id="main_menu_bar" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem fx:id="menu_new_button" mnemonicParsing="false" text="New" />
-            <MenuItem fx:id="menu_open_button" mnemonicParsing="false" onAction="#openFile" text="Open…" />
-            <Menu mnemonicParsing="false" onAction="#openRecent" text="Open Recent" />
+            <MenuItem fx:id="menu_open_button" mnemonicParsing="false" onAction="#openFile" text="Open File" />
+            <Menu mnemonicParsing="false" onAction="#openRecent" text="Open Directory" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
             <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Preferences…" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Quit" />
@@ -79,7 +56,7 @@
           <items>
             <HBox>
               <children>
-                <Button fx:id="left_side_bar_project_button12" focusTraversable="false" mnemonicParsing="false" text="Untitled">
+                <Button fx:id="btnProject" focusTraversable="false" mnemonicParsing="false" text="Untitled">
                   <graphic>
                     <ImageView fitHeight="13.0" fitWidth="13.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
                       <image>
@@ -354,7 +331,7 @@
                               <children>
                                 <TabPane fx:id="editor_tab_pane" tabClosingPolicy="ALL_TABS" tabMinWidth="70.0" VBox.vgrow="ALWAYS">
                                   <tabs>
-                                    <Tab style="-fx-border-color: #9B9B9B #9B9B9B #fff transparent;" text="Untitled">
+                                    <Tab fx:id="mainTab" style="-fx-border-color: #9B9B9B #9B9B9B #fff transparent;" text="untitled">
                                       <content>
                                         <AnchorPane style="-fx-background-color: #fff;">
                                           <children>

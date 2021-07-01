@@ -34,7 +34,7 @@ public class AnalizadorLexico
 
     public void AnalizarCodigo(List<String> lineasCodigo) //Para cada palabra en cada linea analizar con metodos
     {                                                     //del diagrama de transiciones e insertar en lista lexemas
-        int fila = -1;
+        int fila = 0;
         int columna = 0;
         for(String linea: lineasCodigo){
             fila++;

@@ -797,48 +797,55 @@ var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocComme
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var JavaHighlightRules = function() {
+//    var keywords = (
+//    "abstract|continue|for|new|switch|" +
+//    "assert|default|goto|package|synchronized|" +
+//    "boolean|do|if|private|this|" +
+//    "break|double|implements|protected|throw|" +
+//    "byte|else|import|public|throws|" +
+//    "case|enum|instanceof|return|transient|" +
+//    "catch|extends|int|short|try|" +
+//    "char|final|interface|static|void|" +
+//    "class|finally|long|strictfp|volatile|" +
+//    "const|float|native|super|while|" +
+//    "var|string|real"
+//    );
+
+
+//    var buildinConstants = ("null|Infinity|NaN|undefined");
+
+//    var langClasses = (
+//        "AbstractMethodError|AssertionError|ClassCircularityError|"+
+//        "ClassFormatError|Deprecated|EnumConstantNotPresentException|"+
+//        "ExceptionInInitializerError|IllegalAccessError|"+
+//        "IllegalThreadStateException|InstantiationError|InternalError|"+
+//        "NegativeArraySizeException|NoSuchFieldError|Override|Process|"+
+//        "ProcessBuilder|SecurityManager|StringIndexOutOfBoundsException|"+
+//        "SuppressWarnings|TypeNotPresentException|UnknownError|"+
+//        "UnsatisfiedLinkError|UnsupportedClassVersionError|VerifyError|"+
+//        "InstantiationException|IndexOutOfBoundsException|"+
+//        "ArrayIndexOutOfBoundsException|CloneNotSupportedException|"+
+//        "NoSuchFieldException|IllegalArgumentException|NumberFormatException|"+
+//        "SecurityException|Void|InheritableThreadLocal|IllegalStateException|"+
+//        "InterruptedException|NoSuchMethodException|IllegalAccessException|"+
+//        "UnsupportedOperationException|Enum|StrictMath|Package|Compiler|"+
+//        "Readable|Runtime|StringBuilder|Math|IncompatibleClassChangeError|"+
+//        "NoSuchMethodError|ThreadLocal|RuntimePermission|ArithmeticException|"+
+//        "NullPointerException|Long|Integer|Short|Byte|Double|Number|Float|"+
+//        "Character|Boolean|StackTraceElement|Appendable|StringBuffer|"+
+//        "Iterable|ThreadGroup|Runnable|Thread|IllegalMonitorStateException|"+
+//        "StackOverflowError|OutOfMemoryError|VirtualMachineError|"+
+//        "ArrayStoreException|ClassCastException|LinkageError|"+
+//        "NoClassDefFoundError|ClassNotFoundException|RuntimeException|"+
+//        "Exception|ThreadDeath|Error|Throwable|System|ClassLoader|"+
+//        "Cloneable|Class|CharSequence|Comparable|Object"
+//    );
     var keywords = (
-    "abstract|continue|for|new|switch|" +
-    "assert|default|goto|package|synchronized|" +
-    "boolean|do|if|private|this|" +
-    "break|double|implements|protected|throw|" +
-    "byte|else|import|public|throws|" +
-    "case|enum|instanceof|return|transient|" +
-    "catch|extends|int|short|try|" +
-    "char|final|interface|static|void|" +
-    "class|finally|long|strictfp|volatile|" +
-    "const|float|native|super|while|" +
-    "var|string|real"
+    "int|real|bool|if|else|for|while|string|void|return|true|false|end"
     );
-
     var buildinConstants = ("null|Infinity|NaN|undefined");
-
-
     var langClasses = (
-        "AbstractMethodError|AssertionError|ClassCircularityError|"+
-        "ClassFormatError|Deprecated|EnumConstantNotPresentException|"+
-        "ExceptionInInitializerError|IllegalAccessError|"+
-        "IllegalThreadStateException|InstantiationError|InternalError|"+
-        "NegativeArraySizeException|NoSuchFieldError|Override|Process|"+
-        "ProcessBuilder|SecurityManager|StringIndexOutOfBoundsException|"+
-        "SuppressWarnings|TypeNotPresentException|UnknownError|"+
-        "UnsatisfiedLinkError|UnsupportedClassVersionError|VerifyError|"+
-        "InstantiationException|IndexOutOfBoundsException|"+
-        "ArrayIndexOutOfBoundsException|CloneNotSupportedException|"+
-        "NoSuchFieldException|IllegalArgumentException|NumberFormatException|"+
-        "SecurityException|Void|InheritableThreadLocal|IllegalStateException|"+
-        "InterruptedException|NoSuchMethodException|IllegalAccessException|"+
-        "UnsupportedOperationException|Enum|StrictMath|Package|Compiler|"+
-        "Readable|Runtime|StringBuilder|Math|IncompatibleClassChangeError|"+
-        "NoSuchMethodError|ThreadLocal|RuntimePermission|ArithmeticException|"+
-        "NullPointerException|Long|Integer|Short|Byte|Double|Number|Float|"+
-        "Character|Boolean|StackTraceElement|Appendable|StringBuffer|"+
-        "Iterable|ThreadGroup|Runnable|Thread|IllegalMonitorStateException|"+
-        "StackOverflowError|OutOfMemoryError|VirtualMachineError|"+
-        "ArrayStoreException|ClassCastException|LinkageError|"+
-        "NoClassDefFoundError|ClassNotFoundException|RuntimeException|"+
-        "Exception|ThreadDeath|Error|Throwable|System|ClassLoader|"+
-        "Cloneable|Class|CharSequence|Comparable|Object"
+        ""
     );
 
     var keywordMapper = this.createKeywordMapper({
